@@ -1,11 +1,12 @@
 # Sampling_Benchmarks
 
-[![PyPI](https://img.shields.io/pypi/v/sampling_benchmarks.svg)][pypi_]
+<!-- [![PyPI](https://img.shields.io/pypi/v/sampling_benchmarks.svg)][pypi_]
 [![Status](https://img.shields.io/pypi/status/sampling_benchmarks.svg)][status]
 [![Python Version](https://img.shields.io/pypi/pyversions/sampling_benchmarks)][python version]
 [![License](https://img.shields.io/pypi/l/sampling_benchmarks)][license]
 
-[![Read the documentation at https://sampling_benchmarks.readthedocs.io/](https://img.shields.io/readthedocs/sampling_benchmarks/latest.svg?label=Read%20the%20Docs)][read the docs]
+[![Read the documentation at https://sampling_benchmarks.readthedocs.io/](https://img.shields.io/readthedocs/sampling_benchmarks/latest.svg?label=Read%20the%20Docs)][read the docs] -->
+
 [![Tests](https://github.com/dawsonc/sampling_benchmarks/workflows/Tests/badge.svg)][tests]
 [![Codecov](https://codecov.io/gh/dawsonc/sampling_benchmarks/branch/main/graph/badge.svg)][codecov]
 
@@ -31,11 +32,13 @@
 
 ## Installation
 
-You can install _Sampling_Benchmarks_ via [pip] from [PyPI]:
+For reproducibility, these benchmarks are intended to be run from within a development container. To install, clone the code
 
-```console
-$ pip install sampling_benchmarks
+```bash
+git clone git@github.com:dawsonc/sampling_benchmarks.git
 ```
+
+Open directory in VSCode, then use the `Rebuild and Reopen in container` command. The package should be installed in the container. You can verify that installation was successful by running the tests with `nox`
 
 ## Usage
 
