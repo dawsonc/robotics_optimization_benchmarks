@@ -4,19 +4,57 @@
   "name": "Python 3",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "mcr.microsoft.com/devcontainers/python:0-3.10",
-
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
-
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
-
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "pipx install poetry && pipx install nox && pipx inject nox nox-poetry && poetry install && nox -s pre-commit -- install"
-
+  "postCreateCommand": "pipx install poetry && pipx install nox && pipx inject nox nox-poetry && poetry install && nox -s pre-commit -- install",
   // Configure tool-specific properties.
-  // "customizations": {},
-
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      "settings": {
+        "editor.rulers": [90],
+        "editor.trimAutoWhitespace": true,
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "files.trimTrailingWhitespace": true,
+        "files.autoSave": "onFocusChange",
+        "python.analysis.typeCheckingMode": "strict",
+        "python.defaultInterpreterPath": "/opt/conda/bin/python",
+        "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+        "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+        "python.formatting.blackArgs": ["--config", "pyproject.toml"],
+        "python.formatting.provider": "black",
+        "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+        "python.linting.enabled": true,
+        "python.linting.lintOnSave": true,
+        "python.linting.banditArgs": ["--configfile", "pyproject.toml"],
+        "python.linting.banditEnabled": true,
+        "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+        "python.linting.flake8Args": ["--config", ".flake8"],
+        "python.linting.flake8Enabled": true,
+        "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+        "python.linting.mypyEnabled": true,
+        "python.linting.mypyArgs": ["--config-file", ".pyproject.toml"],
+        "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+        "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+        "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+        "python.linting.pylintEnabled": true,
+        "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.pylint",
+        "ms-python.black-formatter",
+        "ms-vsliveshare.vsliveshare",
+        "ryanluker.vscode-coverage-gutters",
+        "bungcip.better-toml"
+      ]
+    }
+  }
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "root"
 }

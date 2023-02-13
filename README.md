@@ -51,7 +51,7 @@ To learn more, see the [Contributor Guide].
 
 ## License
 
-Distributed under the terms of the [MIT license][license],
+Distributed under the terms of the [BSD 3-clause license][license],
 _Sampling_Benchmarks_ is free and open source software.
 
 ## Issues
