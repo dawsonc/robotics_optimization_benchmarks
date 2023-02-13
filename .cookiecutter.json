@@ -1,0 +1,14 @@
+{
+  "_output_dir": "/home/cbd/src/mit/sampling_benchmarks",
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Charles Dawson",
+  "copyright_year": "2023",
+  "development_status": "Development Status :: 1 - Planning",
+  "email": "cbd@mit.edu",
+  "friendly_name": "Sampling_Benchmarks",
+  "github_user": "dawsonc",
+  "license": "MIT",
+  "package_name": "sampling_benchmarks",
+  "project_name": "sampling_benchmarks",
+  "version": "0.0.0"
+}
