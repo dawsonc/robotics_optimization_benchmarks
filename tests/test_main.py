@@ -2,7 +2,7 @@
 import pytest
 from click.testing import CliRunner
 
-from sampling_benchmarks import __main__
+from robotics_optimization_benchmarks import __main__
 
 
 @pytest.fixture

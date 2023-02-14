@@ -19,5 +19,5 @@ reference
 contributing
 Code of Conduct <codeofconduct>
 License <license>
-Changelog <https://github.com/dawsonc/sampling_benchmarks/releases>
+Changelog <https://github.com/dawsonc/robotics_optimization_benchmarks/releases>
 ```

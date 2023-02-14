@@ -1,14 +1,14 @@
 {
-  "_output_dir": "/home/cbd/src/mit/sampling_benchmarks",
+  "_output_dir": "/home/cbd/src/mit/robotics_optimization_benchmarks",
   "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
   "author": "Charles Dawson",
   "copyright_year": "2023",
   "development_status": "Development Status :: 1 - Planning",
   "email": "cbd@mit.edu",
-  "friendly_name": "Sampling_Benchmarks",
+  "friendly_name": "Robotics Optimization Benchmarks",
   "github_user": "dawsonc",
   "license": "MIT",
-  "package_name": "sampling_benchmarks",
-  "project_name": "sampling_benchmarks",
+  "package_name": "robotics_optimization_benchmarks",
+  "project_name": "robotics_optimization_benchmarks",
   "version": "0.0.0"
 }
