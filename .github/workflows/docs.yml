@@ -1,0 +1,44 @@
+name: Check documentation
+on: [push, pull_request]
+jobs:
+  docs:
+    name: Build documentation & check links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=.github/workflows/constraints.txt pip
+          pip --version
+
+      - name: Upgrade pip in virtual environments
+        shell: python
+        run: |
+          import os
+          import pip
+
+          with open(os.environ["GITHUB_ENV"], mode="a") as io:
+              print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
+
+      - name: Install Poetry
+        run: |
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
+          poetry --version
+
+      - name: Install Nox
+        run: |
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
+          nox --version
+
+      - name: Build documentation
+        run: nox --force-color --session=docs-build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: docs/_build

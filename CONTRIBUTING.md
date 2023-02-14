@@ -7,15 +7,13 @@ welcomes contributions in the form of bug reports, feature requests, and pull re
 Here is a list of important resources for contributors:
 
 - [Source Code]
-<!-- - [Documentation] -->
+- [Documentation]
 - [Issue Tracker]
 - [Code of Conduct]
 
 [mit license]: https://opensource.org/licenses/MIT
 [source code]: https://github.com/dawsonc/robotics_optimization_benchmarks
-
-<!-- [documentation]: https://robotics_optimization_benchmarks.readthedocs.io/ -->
-
+[documentation]: https://robotics_optimization_benchmarks.readthedocs.io/
 [issue tracker]: https://github.com/dawsonc/robotics_optimization_benchmarks/issues
 
 ## How to report a bug
