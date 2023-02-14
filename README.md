@@ -23,7 +23,7 @@
 
 This project aims to do 3 things:
 
-1. Maintain a suite of robotics- and control-relevant optimization benchmarks. This is similar to the aims of the [Gymnasium](https://gymnasium.farama.org) project, but is a) more specific to controls and robotics, b) intended for more general optimization rather than strictly reinforcement learning, and c) is implemented in [JAX](jax.readthedocs.org) to allow for easy acceleration, parallelization, and automatic-differentiation.
+1. Maintain a suite of robotics- and control-relevant optimization benchmarks. This is similar to the aims of the [Gymnasium](https://gymnasium.farama.org) project, but is a) more specific to controls and robotics, b) intended for more general optimization rather than strictly reinforcement learning, and c) is implemented in [JAX](jax.readthedocs.io) to allow for easy acceleration, parallelization, and automatic-differentiation.
 2. Maintain a set of baseline optimization algorithms (ranging from exact gradient-based to gradient free) against which researchers can compare their new algorithms.
 3. Publish up-to-date comparisons of the performance of the baseline algorithms on the benchmark suite.
 
@@ -35,7 +35,7 @@ For reproducibility, these benchmarks are intended to be run from within a devel
 git clone git@github.com:dawsonc/robotics_optimization_benchmarks.git
 ```
 
-Open directory in VSCode, then use the `Rebuild and Reopen in container` command. The package should be installed in the container. You can verify that installation was successful by running the tests with `nox`
+Open directory in VSCode, then use the `Rebuild and Reopen in container` command. The package should be installed in the container. You can verify that installation was successful by running the tests with `poetry run nox`
 
 ## Usage
 
@@ -44,6 +44,7 @@ Please see the [Command-line Reference] for details.
 ## Citing
 
 If you find this useful in your own research, please cite our publication on this topic
+
 ```bibtex
 TODO
 ```

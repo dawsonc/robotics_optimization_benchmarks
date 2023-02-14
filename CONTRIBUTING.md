@@ -13,7 +13,9 @@ Here is a list of important resources for contributors:
 
 [mit license]: https://opensource.org/licenses/MIT
 [source code]: https://github.com/dawsonc/robotics_optimization_benchmarks
+
 <!-- [documentation]: https://robotics_optimization_benchmarks.readthedocs.io/ -->
+
 [issue tracker]: https://github.com/dawsonc/robotics_optimization_benchmarks/issues
 
 ## How to report a bug
