@@ -1,19 +1,19 @@
 [tool.poetry]
-name = "sampling_benchmarks"
+name = "robotics_optimization_benchmarks"
 version = "0.0.0"
-description = "Sampling_Benchmarks"
+description = "robotics_optimization_Benchmarks"
 authors = ["Charles Dawson <cbd@mit.edu>"]
 license = "BSD 3-clause"
 readme = "README.md"
-homepage = "https://github.com/dawsonc/sampling_benchmarks"
-repository = "https://github.com/dawsonc/sampling_benchmarks"
-documentation = "https://sampling_benchmarks.readthedocs.io"
+homepage = "https://github.com/dawsonc/robotics_optimization_benchmarks"
+repository = "https://github.com/dawsonc/robotics_optimization_benchmarks"
+documentation = "https://robotics_optimization_benchmarks.readthedocs.io"
 classifiers = [
     "Development Status :: 1 - Planning",
 ]
 
 [tool.poetry.urls]
-Changelog = "https://github.com/dawsonc/sampling_benchmarks/releases"
+Changelog = "https://github.com/dawsonc/robotics_optimization_benchmarks/releases"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -33,6 +33,8 @@ flake8-rst-docstrings = ">=0.2.5"
 furo = ">=2021.11.12"
 isort = ">=5.10.1"
 mypy = ">=0.930"
+nox = ">=2022.11.21"
+nox-poetry = ">=1.0.2"
 pep8-naming = ">=0.12.1"
 pre-commit = ">=2.16.0"
 pre-commit-hooks = ">=4.1.0"
@@ -47,7 +49,7 @@ xdoctest = {extras = ["colors"], version = ">=0.15.10"}
 myst-parser = {version = ">=0.16.1"}
 
 [tool.poetry.scripts]
-sampling_benchmarks = "sampling_benchmarks.__main__:main"
+robotics_optimization_benchmarks = "robotics_optimization_benchmarks.__main__:main"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -55,7 +57,7 @@ tests = ["tests", "*/tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["sampling_benchmarks", "tests"]
+source = ["robotics_optimization_benchmarks", "tests"]
 
 [tool.coverage.report]
 show_missing = true

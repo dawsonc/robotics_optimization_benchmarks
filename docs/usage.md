@@ -1,7 +1,7 @@
 # Usage
 
 ```{eval-rst}
-.. click:: sampling_benchmarks.__main__:main
-    :prog: sampling_benchmarks
+.. click:: robotics_optimization_benchmarks.__main__:main
+    :prog: robotics_optimization_benchmarks
     :nested: full
 ```

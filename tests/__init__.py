@@ -1,1 +1,1 @@
-"""Test suite for the sampling_benchmarks package."""
+"""Test suite for the robotics_optimization_benchmarks package."""

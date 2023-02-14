@@ -1,5 +1,5 @@
 """Sphinx configuration."""
-project = "Sampling_Benchmarks"
+project = "Robotics Optimization Benchmarks"
 author = "Charles Dawson"
 copyright = "2023, Charles Dawson"
 extensions = [

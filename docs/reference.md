@@ -1,8 +1,8 @@
 # Reference
 
-## sampling_benchmarks
+## robotics_optimization_benchmarks
 
 ```{eval-rst}
-.. automodule:: sampling_benchmarks
+.. automodule:: robotics_optimization_benchmarks
    :members:
 ```
