@@ -3,7 +3,7 @@ name = "sampling_benchmarks"
 version = "0.0.0"
 description = "Sampling_Benchmarks"
 authors = ["Charles Dawson <cbd@mit.edu>"]
-license = "MIT"
+license = "BSD 3-clause"
 readme = "README.md"
 homepage = "https://github.com/dawsonc/sampling_benchmarks"
 repository = "https://github.com/dawsonc/sampling_benchmarks"
@@ -21,6 +21,7 @@ click = ">=8.0.1"
 
 [tool.poetry.dev-dependencies]
 Pygments = ">=2.10.0"
+beartype = ">=0.12.0"
 black = ">=21.10b0"
 coverage = {extras = ["toml"], version = ">=6.2"}
 darglint = ">=1.8.1"
