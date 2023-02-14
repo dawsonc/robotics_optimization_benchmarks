@@ -23,7 +23,7 @@
 
 This project aims to do 3 things:
 
-1. Maintain a suite of robotics- and control-relevant optimization benchmarks. This is similar to the aims of the [Gymnasium](https://gymnasium.farama.org) project, but is a) more specific to controls and robotics, b) intended for more general optimization rather than strictly reinforcement learning, and c) is implemented in [JAX](jax.readthedocs.io) to allow for easy acceleration, parallelization, and automatic-differentiation.
+1. Maintain a suite of robotics- and control-relevant optimization benchmarks. This is similar to the aims of the [Gymnasium](https://gymnasium.farama.org) project, but is a) more specific to controls and robotics, b) intended for more general optimization rather than strictly reinforcement learning, and c) is implemented in [JAX](https://jax.readthedocs.io) to allow for easy acceleration, parallelization, and automatic-differentiation.
 2. Maintain a set of baseline optimization algorithms (ranging from exact gradient-based to gradient free) against which researchers can compare their new algorithms.
 3. Publish up-to-date comparisons of the performance of the baseline algorithms on the benchmark suite.
 
