@@ -23,7 +23,7 @@
         "files.trimTrailingWhitespace": true,
         "files.autoSave": "onFocusChange",
         "python.analysis.typeCheckingMode": "strict",
-        "python.defaultInterpreterPath": "/opt/conda/bin/python",
+        "python.defaultInterpreterPath": "/home/vscode/.cache/pypoetry/virtualenvs/robotics-optimization-benchmarks-yn6dH--y-py3.10/bin/python",
         "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
         "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
         "python.formatting.blackArgs": ["--config", "pyproject.toml"],
@@ -47,7 +47,7 @@
       },
       "extensions": [
         "ms-python.python",
-        "ms-python.pylint",
+        "ms-python.flake8",
         "ms-python.black-formatter",
         "ms-vsliveshare.vsliveshare",
         "ryanluker.vscode-coverage-gutters",
