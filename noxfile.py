@@ -22,7 +22,7 @@ except ImportError:
     raise SystemExit(dedent(message)) from None
 
 
-package = "robotics_optimization_benchmarks"
+PACKAGE = "robotics_optimization_benchmarks"
 python_versions = ["3.10"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
@@ -35,7 +35,9 @@ nox.options.sessions = (
 )
 
 
-def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
+def activate_virtualenv_in_precommit_hooks(
+    session: Session,  # pylint: disable=redefined-outer-name
+) -> None:
     """Activate virtualenv in hooks installed by pre-commit.
 
     This function patches git hooks installed by pre-commit to activate the
@@ -110,7 +112,7 @@ def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
 
 
 @session(name="pre-commit", python=python_versions[0])
-def precommit(session: Session) -> None:
+def precommit(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Lint using pre-commit."""
     args = session.posargs or [
         "run",
@@ -138,7 +140,7 @@ def precommit(session: Session) -> None:
 
 
 @session(python=python_versions[0])
-def safety(session: Session) -> None:
+def safety(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Scan dependencies for insecure packages."""
     requirements = session.poetry.export_requirements()
     session.install("safety")
@@ -146,7 +148,7 @@ def safety(session: Session) -> None:
 
 
 @session(python=python_versions)
-def tests(session: Session) -> None:
+def tests(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Run the test suite."""
     session.install(".")
     session.install("coverage[toml]", "pytest", "pygments")
@@ -158,7 +160,7 @@ def tests(session: Session) -> None:
 
 
 @session(python=python_versions[0])
-def coverage(session: Session) -> None:
+def coverage(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Produce the coverage report."""
     args = session.posargs or ["report"]
 
@@ -171,20 +173,20 @@ def coverage(session: Session) -> None:
 
 
 @session(python=python_versions[0])
-def typeguard(session: Session) -> None:
+def typeguard(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Runtime type checking using Typeguard."""
     session.install(".")
     session.install("pytest", "typeguard", "pygments")
-    session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
+    session.run("pytest", f"--typeguard-packages={PACKAGE}", *session.posargs)
 
 
 @session(python=python_versions)
-def xdoctest(session: Session) -> None:
+def xdoctest(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Run examples with xdoctest."""
     if session.posargs:
-        args = [package, *session.posargs]
+        args = [PACKAGE, *session.posargs]
     else:
-        args = [f"--modname={package}", "--command=all"]
+        args = [f"--modname={PACKAGE}", "--command=all"]
         if "FORCE_COLOR" in os.environ:
             args.append("--colored=1")
 
@@ -194,7 +196,7 @@ def xdoctest(session: Session) -> None:
 
 
 @session(name="docs-build", python=python_versions[0])
-def docs_build(session: Session) -> None:
+def docs_build(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Build the documentation."""
     args = session.posargs or ["docs", "docs/_build"]
     if not session.posargs and "FORCE_COLOR" in os.environ:
@@ -211,7 +213,7 @@ def docs_build(session: Session) -> None:
 
 
 @session(python=python_versions[0])
-def docs(session: Session) -> None:
+def docs(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Build and serve the documentation with live reloading on file changes."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]
     session.install(".")

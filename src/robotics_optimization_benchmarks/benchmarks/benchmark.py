@@ -2,14 +2,16 @@
 from abc import ABC
 from abc import abstractmethod
 
+import matplotlib.pyplot as plt
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
-from jax.random import PRNGKeyArray
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import PyTree
 from jaxtyping import jaxtyped
+
+from robotics_optimization_benchmarks.types import PRNGKeyArray
 
 
 # Define a convenience type for decision variables
@@ -40,11 +42,11 @@ class Benchmark(ABC):
 
     @classmethod
     @beartype
-    def from_dict(cls, dict: Dict[str, Any]) -> "Benchmark":
+    def from_dict(cls, params: Dict[str, Any]) -> "Benchmark":
         """Create a new benchmark instance from a dictionary.
 
         Args:
-            dict: a dictionary containing the parameters to initialize the benchmark.
+            params: a dictionary containing the parameters to initialize the benchmark.
 
         Raises:
             TypeError: if the dictionary contains invalid parameters.  # noqa: DAR402
@@ -52,7 +54,7 @@ class Benchmark(ABC):
         Returns:
             A new benchmark instance.
         """
-        return cls(**dict)
+        return cls(**params)
 
     @abstractmethod
     @jaxtyped
@@ -81,10 +83,12 @@ class Benchmark(ABC):
         """
 
     @abstractmethod
-    @beartype
-    def render_solution(self, solution: DecisionVariable) -> None:
+    def render_solution(self, solution: DecisionVariable) -> plt.figure:
         """Visualize a solution to the problem.
 
         Args:
             solution: the solution to visualize.
+
+        Returns:
+            A matplotlib figure containing the visualization.
         """
