@@ -20,11 +20,8 @@ class Benchmark(ABC):
     """An abstract base class for implementing benchmark optimization problems.
 
     Subclass `Benchmark` to implement new optimization problems. Each subclass must
-    define the following methods:
-        * `sample_initial_guess`: sample a random initial solution to the problem.
-        * `evaluate_solution`: evaluate the objective function at a given solution,
-            returning a scalar that should be minimized.
-        * `render_solution`: visualize a solution to the problem.
+    define the abstract methods defined in this class for sampling random solutions,
+    evaluating potential solutions, and rendering solutions.
 
     Benchmarks are assumed to define minimization problems.
 

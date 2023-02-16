@@ -35,11 +35,14 @@ flake8-docstrings = ">=1.6.0"
 flake8-rst-docstrings = ">=0.2.5"
 furo = ">=2021.11.12"
 isort = ">=5.10.1"
+mypy = ">=1.0.0"
+myst-parser = {version = ">=0.16.1"}
 nox = ">=2022.11.21"
 nox-poetry = ">=1.0.2"
 pep8-naming = ">=0.12.1"
 pre-commit = ">=2.16.0"
 pre-commit-hooks = ">=4.1.0"
+pylint = ">=2.15.10"
 pytest = ">=7.2.1"
 pyupgrade = ">=2.29.1"
 safety = ">=1.10.3"
@@ -48,7 +51,6 @@ sphinx-autobuild = ">=2021.3.14"
 sphinx-click = ">=3.0.2"
 typeguard = ">=2.13.3"
 xdoctest = {extras = ["colors"], version = ">=0.15.10"}
-myst-parser = {version = ">=0.16.1"}
 
 [tool.poetry.scripts]
 robotics_optimization_benchmarks = "robotics_optimization_benchmarks.__main__:main"

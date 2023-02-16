@@ -1,5 +1,5 @@
 """Define a public API for managing the benchmark registry."""
-from beartype import beartype  # TODO how to get rid of this warning???
+from beartype import beartype
 from beartype.typing import Type
 
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
