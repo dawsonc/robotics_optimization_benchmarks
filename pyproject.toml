@@ -23,7 +23,7 @@ jax = ">=0.4.3"
 jaxlib = ">=0.4.3"
 jaxtyping = ">=0.2.11"
 matplotlib = ">=3.7.0"
-# brax = ">=0.1.1"
+# brax = ">=0.1.1"  # FIXME: once brax release doesn't break on scan
 brax = { git = "https://github.com/google/brax.git", branch = "main" }
 equinox = ">=0.9.2"
 

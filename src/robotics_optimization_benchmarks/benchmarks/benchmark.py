@@ -91,7 +91,4 @@ class Benchmark(ABC):
         Args:
             solution: the solution to visualize.
             save_to: the path or file-like object to save the visualization to.
-
-        Returns:
-            A matplotlib figure containing the visualization.
         """

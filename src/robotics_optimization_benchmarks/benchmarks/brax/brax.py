@@ -61,31 +61,31 @@ class Brax(Benchmark):
     parameters of this policy will form the decision variables.
 
     Available tasks include:
-        - **[ant](github.com/google/brax/blob/main/brax/envs/ant.py)** from
-            [OpenAI Gym Ant-v2](gym.openai.com/envs/Ant-v2/): make a four-legged
-            creature walk forward as fast as possible.
-        - **[halfcheetah](github.com/google/brax/blob/main/brax/envs/halfcheetah.py)**
-            from [OpenAI Gym HalfCheetah-v2](gym.openai.com/envs/HalfCheetah-v2/): make
-            a two-dimensional two-legged creature walk forward as fast as possible.
-        - **[hopper](github.com/google/brax/blob/main/brax/envs/hopper.py)** from
-            [OpenAI Gym Hopper-v2](gym.openai.com/envs/Hopper-v2/): make a
-            two-dimensional one-legged robot hop forward as fast as possible.
-        - **[humanoid](github.com/google/brax/blob/main/brax/envs/humanoid.py)** from
-            [OpenAI Gym Humanoid-v2](gym.openai.com/envs/Humanoid-v2/): make a
-            three-dimensional bipedal robot walk forward as fast as possible, without
-            falling over.
-        - **[reacher](github.com/google/brax/blob/main/brax/envs/reacher.py)**: from
-            [OpenAI Gym Reacher-v2](gym.openai.com/envs/Reacher-v2/): makes a two-joint
-            reacher arm move its tip to a target.
-        - **[walker2d](github.com/google/brax/blob/main/brax/envs/walker2d.py)** from
-            [OpenAI Gym Walker2d-v2](gym.openai.com/envs/Walker2d-v2/): make a
-            two-dimensional bipedal robot walk forward as fast as possible
-        - **[fetch](github.com/google/brax/blob/main/brax/envs/fetch.py)**: make a
-            three-dimensional dog chase after a moving target.
-        - **[grasp](github.com/google/brax/blob/main/brax/envs/grasp.py)**: a grabber
-            hand must pick up a ball and carry it to a moving target.
-        - **[ur5e](github.com/google/brax/blob/main/brax/envs/ur5e.py)**: a ur5e robot
-            arm that moves its end effector to a series of targets.
+        - `ant <github.com/google/brax/blob/main/brax/envs/ant.py>`_ from
+          `OpenAI Gym Ant-v2 <gym.openai.com/envs/Ant-v2/>`_: make a four-legged
+          creature walk forward as fast as possible.
+        - `halfcheetah <github.com/google/brax/blob/main/brax/envs/halfcheetah.py>`_
+          from `OpenAI Gym HalfCheetah-v2 <gym.openai.com/envs/HalfCheetah-v2/>`_: make
+          a two-dimensional two-legged creature walk forward as fast as possible.
+        - `hopper <github.com/google/brax/blob/main/brax/envs/hopper.py>`_ from
+          `OpenAI Gym Hopper-v2 <gym.openai.com/envs/Hopper-v2/>`_: make a
+          two-dimensional one-legged robot hop forward as fast as possible.
+        - `humanoid <github.com/google/brax/blob/main/brax/envs/humanoid.py>`_ from
+          `OpenAI Gym Humanoid-v2 <gym.openai.com/envs/Humanoid-v2/>`_: make a
+          three-dimensional bipedal robot walk forward as fast as possible, without
+          falling over.
+        - `reacher <github.com/google/brax/blob/main/brax/envs/reacher.py>`_: from
+          `OpenAI Gym Reacher-v2 <gym.openai.com/envs/Reacher-v2/>`_: makes a two-joint
+          reacher arm move its tip to a target.
+        - `walker2d <github.com/google/brax/blob/main/brax/envs/walker2d.py>`_ from
+          `OpenAI Gym Walker2d-v2 <gym.openai.com/envs/Walker2d-v2/>`_: make a
+          two-dimensional bipedal robot walk forward as fast as possible
+        - `fetch <github.com/google/brax/blob/main/brax/envs/fetch.py>`_: make a
+          three-dimensional dog chase after a moving target.
+        - `grasp <github.com/google/brax/blob/main/brax/envs/grasp.py>`_: a grabber
+          hand must pick up a ball and carry it to a moving target.
+        - `ur5e <github.com/google/brax/blob/main/brax/envs/ur5e.py>`_: a ur5e robot
+          arm that moves its end effector to a series of targets.
 
 
     Attributes:

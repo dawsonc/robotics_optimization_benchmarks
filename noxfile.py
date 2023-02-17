@@ -28,7 +28,7 @@ nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
     "safety",
-    "tests",
+    "quick_tests",
     "typeguard",
     "xdoctest",
     "docs-build",
@@ -186,7 +186,9 @@ def typeguard(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Runtime type checking using Typeguard."""
     session.install(".")
     session.install("pytest", "typeguard", "pygments")
-    session.run("pytest", f"--typeguard-packages={PACKAGE}", *session.posargs)
+    session.run(
+        "pytest", "-m", "not slow", f"--typeguard-packages={PACKAGE}", *session.posargs
+    )
 
 
 @session(python=python_versions)
