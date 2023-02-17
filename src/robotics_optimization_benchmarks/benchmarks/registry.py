@@ -1,15 +1,20 @@
 """Define a public API for managing the benchmark registry."""
 from beartype import beartype
+from beartype.typing import Dict
 from beartype.typing import Type
 
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
-from robotics_optimization_benchmarks.registry import Registry
+from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
+from robotics_optimization_benchmarks.benchmarks.reacher import Reacher
 
 
 # Make a registry to store the benchmarks
 # WARNING: global mutable state is usually frowned upon, but here we'll manage
 # access to it using public functions to mitigate some of the risk
-_benchmark_registry: Registry[Type[Benchmark]] = Registry[Type[Benchmark]]()
+_benchmark_registry: Dict[str, Type[Benchmark]] = {
+    Quadratic.name: Quadratic,
+    Reacher.name: Reacher,
+}
 
 
 # Define public functions for accessing the benchmark registry
@@ -33,7 +38,7 @@ def make(name: str) -> Type[Benchmark]:
     Returns:
         The benchmark class stored in the registry.
     """
-    return _benchmark_registry.get_by_name(name)
+    return _benchmark_registry[name]
 
 
 @beartype
@@ -45,7 +50,8 @@ def register(name: str, benchmark: Type[Benchmark]) -> None:
         benchmark: the benchmark class to register.
 
     Raises:
-        ValueError:  # noqa: DAR402
-            if there is already a benchmark registered under this name.
+        ValueError: if there is already a benchmark registered under this name.
     """
-    _benchmark_registry.register(name, benchmark)
+    if name in _benchmark_registry:
+        raise ValueError(f"Benchmark {name} is already registered!")
+    _benchmark_registry[name] = benchmark

@@ -81,13 +81,11 @@ def test_reacher_render_solution_to_binary_io():
 
 
 @pytest.mark.slow
-def test_reacher_render_solution_to_file(monkeypatch):
+def test_reacher_render_solution_to_file(tmpdir):
     """Test rendering the benchmark, saving to a file."""
-    # We need to monkeypatch the file open function to provide a binary IO object
-    monkeypatch.setattr(__builtins__, "open", lambda *args, **kwargs: io.BytesIO())
+    # Save to a temporary directory for testing
+    save_path = tmpdir.join("test_render.gif").strpath
 
-    benchmark = Reacher(
-        horizon=10,
-    )
+    benchmark = Reacher(horizon=10)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
-    benchmark.render_solution(initial_guess, "test_file.gif")
+    benchmark.render_solution(initial_guess, save_path)

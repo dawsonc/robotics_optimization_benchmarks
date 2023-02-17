@@ -157,7 +157,7 @@ def quick_tests(session: Session) -> None:  # pylint: disable=redefined-outer-na
 
 
 @session(python=python_versions)
-def all_tests(session: Session) -> None:  # pylint: disable=redefined-outer-name
+def tests(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Run the test suite."""
     session.install(".")
     session.install("coverage[toml]", "pytest", "pygments")

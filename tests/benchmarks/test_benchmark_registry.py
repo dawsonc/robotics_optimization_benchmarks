@@ -1,10 +1,8 @@
 """Test the benchmark registry."""
 import pytest
-from beartype.typing import Type
 
 import robotics_optimization_benchmarks.benchmarks.registry as br
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
-from robotics_optimization_benchmarks.registry import Registry
 
 
 class SuperAwesomeBenchmark(Benchmark):
@@ -20,7 +18,7 @@ SuperAwesomeBenchmark.__abstractmethods__ = set()  # type: ignore
 @pytest.fixture(autouse=True)
 def mock_registry(monkeypatch) -> None:
     """Monkeypatch the registry to start fresh for each test."""
-    monkeypatch.setattr(br, "_benchmark_registry", Registry[Type[Benchmark]]())
+    monkeypatch.setattr(br, "_benchmark_registry", {})
 
 
 def test_benchmark_registry() -> None:
