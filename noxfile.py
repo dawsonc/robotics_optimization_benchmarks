@@ -148,7 +148,16 @@ def safety(session: Session) -> None:  # pylint: disable=redefined-outer-name
 
 
 @session(python=python_versions)
-def tests(session: Session) -> None:  # pylint: disable=redefined-outer-name
+def quick_tests(session: Session) -> None:  # pylint: disable=redefined-outer-name
+    """Run the test suite, excluding slow tests."""
+    session.install(".")
+    session.install("pytest", "pygments")
+    args = session.posargs + ["-m", "not slow"]
+    session.run("pytest", *args)
+
+
+@session(python=python_versions)
+def all_tests(session: Session) -> None:  # pylint: disable=redefined-outer-name
     """Run the test suite."""
     session.install(".")
     session.install("coverage[toml]", "pytest", "pygments")

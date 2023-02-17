@@ -1,6 +1,7 @@
 """Test the quadratic benchmark."""
+import io
+
 import jax.random as jrandom
-import matplotlib.pyplot as plt
 import pytest
 
 from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
@@ -50,6 +51,4 @@ def test_quadratic_render_solution(dimension):
     """Test rendering the benchmark."""
     benchmark = Quadratic(dimension=dimension)
     solution = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
-    fig = benchmark.render_solution(solution)
-    assert isinstance(fig, plt.Figure)
-    plt.close(fig)
+    benchmark.render_solution(solution, io.BytesIO())

@@ -1,11 +1,10 @@
 """Test the benchmark registry."""
-from copy import deepcopy
-
 import pytest
-from beartype.typing import Generator
+from beartype.typing import Type
 
 import robotics_optimization_benchmarks.benchmarks.registry as br
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
+from robotics_optimization_benchmarks.registry import Registry
 
 
 class SuperAwesomeBenchmark(Benchmark):
@@ -19,15 +18,9 @@ SuperAwesomeBenchmark.__abstractmethods__ = set()  # type: ignore
 
 
 @pytest.fixture(autouse=True)
-def setup_test_registry() -> Generator[None, None, None]:
-    """Clear the benchmark registry before each test and restore it after."""
-    # Stop Pylance from screaming at us while we do bad things
-    old_entries = deepcopy(br._benchmark_registry._entries)  # type: ignore
-    br._benchmark_registry._entries.clear()  # type: ignore
-
-    yield  # tests run here
-
-    br._benchmark_registry._entries = old_entries  # type: ignore
+def mock_registry(monkeypatch) -> None:
+    """Monkeypatch the registry to start fresh for each test."""
+    monkeypatch.setattr(br, "_benchmark_registry", Registry[Type[Benchmark]]())
 
 
 def test_benchmark_registry() -> None:

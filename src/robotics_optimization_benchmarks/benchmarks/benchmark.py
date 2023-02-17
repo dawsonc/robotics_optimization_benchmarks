@@ -2,9 +2,9 @@
 from abc import ABC
 from abc import abstractmethod
 
-import matplotlib.pyplot as plt
 from beartype import beartype
 from beartype.typing import Any
+from beartype.typing import BinaryIO
 from beartype.typing import Dict
 from jaxtyping import Array
 from jaxtyping import Float
@@ -83,11 +83,14 @@ class Benchmark(ABC):
         """
 
     @abstractmethod
-    def render_solution(self, solution: DecisionVariable) -> plt.figure:
-        """Visualize a solution to the problem.
+    def render_solution(
+        self, solution: DecisionVariable, save_to: str | BinaryIO
+    ) -> None:
+        """Visualize a solution to the problem, saving the visualization.
 
         Args:
             solution: the solution to visualize.
+            save_to: the path or file-like object to save the visualization to.
 
         Returns:
             A matplotlib figure containing the visualization.

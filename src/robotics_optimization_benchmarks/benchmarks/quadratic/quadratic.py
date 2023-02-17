@@ -3,11 +3,12 @@ import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from beartype import beartype
+from beartype.typing import BinaryIO
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
 
-from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
+from robotics_optimization_benchmarks.benchmarks import Benchmark
 from robotics_optimization_benchmarks.benchmarks.benchmark import DecisionVariable
 from robotics_optimization_benchmarks.types import PRNGKeyArray
 
@@ -26,7 +27,9 @@ class Quadratic(Benchmark):
         dimension: The dimension of the problem.
     """
 
-    _name = "quadratic"
+    _name: str = "quadratic"
+
+    dimension: int
 
     def __init__(self, dimension: int = 10):
         """Initialize the benchmark.
@@ -64,14 +67,14 @@ class Quadratic(Benchmark):
         """
         return jnp.dot(solution, solution) / self.dimension
 
-    def render_solution(self, solution: DecisionVariable) -> plt.figure:
-        """Visualize a solution to the problem.
+    def render_solution(
+        self, solution: DecisionVariable, save_to: str | BinaryIO
+    ) -> None:
+        """Visualize a solution to the problem, saving the visualization.
 
         Args:
             solution: the solution to visualize.
-
-        Returns:
-            A matplotlib figure containing the visualization.
+            save_to: the path or file-like object to save the visualization to.
         """
         # Create the figure to plot (we'll return this to the caller)
         fig, axis = plt.subplots(1, 1, figsize=(8, 8))
@@ -87,4 +90,6 @@ class Quadratic(Benchmark):
             label="Solution",
         )
 
-        return fig
+        # Save the figure and clean up
+        fig.savefig(save_to, format="png")
+        plt.close(fig)
