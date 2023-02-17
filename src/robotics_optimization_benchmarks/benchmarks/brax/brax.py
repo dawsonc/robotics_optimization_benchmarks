@@ -1,4 +1,4 @@
-"""Define a simple quadratic optimization benchmark."""
+"""Define a benchmark for a generic Brax environment."""
 import brax
 import brax.envs
 import brax.io.image
@@ -50,33 +50,57 @@ class MLP(eqx.Module):
         return self.layers[-1](obs)
 
 
-class Reacher(Benchmark):
-    """Define a benchmark based on the reacher task from the OpenAI Gym.
+class Brax(Benchmark):
+    """Define a benchmark based on the environments included with Brax.
 
-    The reacher task is a 2D task in which the goal is to move a 2D arm to a
-    target location. The arm is controlled by a 2D action space, and the
-    observation space is a 11D vector containing the position and velocity of the
-    arm and the target.
+    These environments are intended for RL, but we can repurpose them for optimization
+    by rolling the out for multiple steps and taking the negative cumulative reward as
+    our cost.
 
-    The goal is to minimize the distance between the end effector and the target
-    location.
+    We'll equip each environment with a multi-layer perceptron control policy; the
+    parameters of this policy will form the decision variables.
 
-    The control action is the output of a neural network, the parameters of which
-    form the decision variable.
+    Available tasks include:
+        - **[ant](github.com/google/brax/blob/main/brax/envs/ant.py)** from
+            [OpenAI Gym Ant-v2](gym.openai.com/envs/Ant-v2/): make a four-legged
+            creature walk forward as fast as possible.
+        - **[halfcheetah](github.com/google/brax/blob/main/brax/envs/halfcheetah.py)**
+            from [OpenAI Gym HalfCheetah-v2](gym.openai.com/envs/HalfCheetah-v2/): make
+            a two-dimensional two-legged creature walk forward as fast as possible.
+        - **[hopper](github.com/google/brax/blob/main/brax/envs/hopper.py)** from
+            [OpenAI Gym Hopper-v2](gym.openai.com/envs/Hopper-v2/): make a
+            two-dimensional one-legged robot hop forward as fast as possible.
+        - **[humanoid](github.com/google/brax/blob/main/brax/envs/humanoid.py)** from
+            [OpenAI Gym Humanoid-v2](gym.openai.com/envs/Humanoid-v2/): make a
+            three-dimensional bipedal robot walk forward as fast as possible, without
+            falling over.
+        - **[reacher](github.com/google/brax/blob/main/brax/envs/reacher.py)**: from
+            [OpenAI Gym Reacher-v2](gym.openai.com/envs/Reacher-v2/): makes a two-joint
+            reacher arm move its tip to a target.
+        - **[walker2d](github.com/google/brax/blob/main/brax/envs/walker2d.py)** from
+            [OpenAI Gym Walker2d-v2](gym.openai.com/envs/Walker2d-v2/): make a
+            two-dimensional bipedal robot walk forward as fast as possible
+        - **[fetch](github.com/google/brax/blob/main/brax/envs/fetch.py)**: make a
+            three-dimensional dog chase after a moving target.
+        - **[grasp](github.com/google/brax/blob/main/brax/envs/grasp.py)**: a grabber
+            hand must pick up a ball and carry it to a moving target.
+        - **[ur5e](github.com/google/brax/blob/main/brax/envs/ur5e.py)**: a ur5e robot
+            arm that moves its end effector to a series of targets.
 
-    This benchmark is implemented using the Brax reacher environment.
 
     Attributes:
         policy_network_width: The number of neurons in each hidden layer of the
             policy network.
         policy_network_depth: The number of hidden layers in the policy network.
+        horizon: The number of time steps to run the simulation for.
     """
 
-    _name: str = "reacher"
+    _name: str = "brax"
+    _task: str
 
-    # The action space is 2D, and the observation space is 11D.
-    _n_actions: int = 2
-    _n_observations: int = 11
+    # These are set based on the task
+    _n_actions: int
+    _n_observations: int
 
     policy_network_depth: int
     policy_network_width: int
@@ -84,6 +108,7 @@ class Reacher(Benchmark):
 
     def __init__(
         self,
+        task: str,
         policy_network_width: int = 32,
         policy_network_depth: int = 2,
         horizon: int = 100,
@@ -91,14 +116,27 @@ class Reacher(Benchmark):
         """Initialize the benchmark.
 
         Args:
+            task: The name of the Brax task environment to use.
             policy_network_width: The number of neurons in each hidden layer of the
                 policy network.
             policy_network_depth: The number of hidden layers in the policy network.
             horizon: The number of time steps to run the simulation for.
         """
+        self._task = task
         self.policy_network_width = policy_network_width
         self.policy_network_depth = policy_network_depth
         self.horizon = horizon
+
+        # Initialize the environment and use it to specify the input and output
+        # dimensions of the policy network.
+        self._env = brax.envs.create(task)
+        self._n_actions = self._env.action_size
+        self._n_observations = self._env.observation_size
+
+    @property
+    def task(self) -> str:
+        """Return the name of the task."""
+        return self._task
 
     @jaxtyped
     @beartype
@@ -158,13 +196,11 @@ class Reacher(Benchmark):
         Returns:
             The objective function evaluated at the given solution.
         """
-        # Create the Brax environment for the reacher environment and reset it
-        # using a fixed arbitrary key
-        env = brax.envs.create(env_name="reacher")
-        state = env.reset(rng=jrandom.PRNGKey(0))
+        # Reset the brax environment using a fixed arbitrary key
+        state = self._env.reset(rng=jrandom.PRNGKey(0))
 
         # Return the cumulative reward (negative so it gets treated like a cost)
-        rollout = self.rollout(env, state, solution)
+        rollout = self.rollout(self._env, state, solution)
         return -rollout.reward.sum()
 
     def render_solution(self, solution: MLP, save_to: str | BinaryIO) -> None:
@@ -174,14 +210,12 @@ class Reacher(Benchmark):
             solution: the solution to visualize.
             save_to: the path or file-like object to save the visualization to.
         """
-        # Create the Brax environment for the reacher environment and reset it
-        # using a fixed arbitrary key
-        env = brax.envs.create(env_name="reacher")
-        state = env.reset(rng=jrandom.PRNGKey(0))
+        # Reset the brax environment using a fixed arbitrary key
+        state = self._env.reset(rng=jrandom.PRNGKey(0))
 
         # Get the rollout and convert from a PyTree with a leading axis for the
         # time dimension to a list of PyTrees with one entry for each time step.
-        rollout = self.rollout(env, state, solution)
+        rollout = self.rollout(self._env, state, solution)
         rollout = jax.tree_util.tree_transpose(
             outer_treedef=jax.tree_util.tree_structure(state),
             inner_treedef=jax.tree_util.tree_structure(list(range(self.horizon))),
@@ -191,7 +225,7 @@ class Reacher(Benchmark):
         # Render, which yields the bytes of a GIF animation, which we have to handle
         # differently depending on whether we're saving to a file or a file-like
         render_bytes = brax.io.image.render(
-            env.sys, [s.qp for s in rollout], width=1280, height=960
+            self._env.sys, [s.qp for s in rollout], width=1280, height=960
         )
         if isinstance(save_to, str):
             with open(save_to, "wb") as file:

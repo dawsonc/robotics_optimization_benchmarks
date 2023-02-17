@@ -152,7 +152,7 @@ def quick_tests(session: Session) -> None:  # pylint: disable=redefined-outer-na
     """Run the test suite, excluding slow tests."""
     session.install(".")
     session.install("pytest", "pygments")
-    args = session.posargs + ["-m", "not slow"]
+    args = ["-m", "not slow"] + session.posargs
     session.run("pytest", *args)
 
 

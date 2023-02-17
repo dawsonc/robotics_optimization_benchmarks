@@ -1,15 +1,33 @@
-"""Test the quadratic benchmark."""
+"""Test the brax benchmarks."""
 import io
 
 import jax.numpy as jnp
 import jax.random as jrandom
 import pytest
 
-from robotics_optimization_benchmarks.benchmarks.reacher.reacher import MLP
-from robotics_optimization_benchmarks.benchmarks.reacher.reacher import Reacher
+from robotics_optimization_benchmarks.benchmarks import make
+from robotics_optimization_benchmarks.benchmarks.brax.brax import MLP
+from robotics_optimization_benchmarks.benchmarks.brax.brax import Brax
 
 
 mlp_depths_to_test = [2, 4]
+envs_to_test = [
+    "ant",
+    "halfcheetah",
+    "hopper",
+    "humanoid",
+    "reacher",
+    "walker2d",
+    "fetch",
+    "grasp",
+    "ur5e",
+]
+
+
+def test_make_brax():
+    """Test making a brax benchmark."""
+    benchmark = make("brax")
+    assert benchmark == Brax
 
 
 @pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
@@ -26,18 +44,21 @@ def test_mlp(policy_network_depth, policy_network_width):
     assert action.shape == (out_size,)
 
 
+@pytest.mark.parametrize("env", envs_to_test)
 @pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_reacher_init(policy_network_depth):
+def test_brax_init(env, policy_network_depth):
     """Test initializing the benchmark."""
-    benchmark = Reacher(policy_network_depth=policy_network_depth)
-    assert benchmark.name == "reacher"
+    benchmark = Brax(env, policy_network_depth=policy_network_depth)
+    assert benchmark.task == env
 
 
+@pytest.mark.parametrize("env", envs_to_test)
 @pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_reacher_from_dict(policy_network_depth):
-    """Test creating a quadratic benchmark from a dictionary."""
-    benchmark = Reacher.from_dict(
+def test_brax_from_dict(env, policy_network_depth):
+    """Test creating a brax benchmark from a dictionary."""
+    benchmark = Brax.from_dict(
         {
+            "task": env,
             "policy_network_depth": policy_network_depth,
             "policy_network_width": 32,
             "horizon": 100,
@@ -46,10 +67,11 @@ def test_reacher_from_dict(policy_network_depth):
     assert benchmark is not None
 
 
+@pytest.mark.parametrize("env", envs_to_test)
 @pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_reacher_sample_initial_guess(policy_network_depth):
+def test_brax_sample_initial_guess(env, policy_network_depth):
     """Test sampling an initial guess."""
-    benchmark = Reacher(policy_network_depth=policy_network_depth)
+    benchmark = Brax(env, policy_network_depth=policy_network_depth)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
 
     # Make sure we can call the neural network
@@ -59,10 +81,11 @@ def test_reacher_sample_initial_guess(policy_network_depth):
     assert action.shape == (n_actions,)
 
 
+@pytest.mark.parametrize("env", envs_to_test)
 @pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_reacher_evaluate_solution(policy_network_depth):
+def test_brax_evaluate_solution(env, policy_network_depth):
     """Test evaluating the benchmark."""
-    benchmark = Reacher(horizon=10, policy_network_depth=policy_network_depth)
+    benchmark = Brax(env, horizon=10, policy_network_depth=policy_network_depth)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     value = benchmark.evaluate_solution(initial_guess)
 
@@ -71,21 +94,21 @@ def test_reacher_evaluate_solution(policy_network_depth):
 
 
 @pytest.mark.slow
-def test_reacher_render_solution_to_binary_io():
+@pytest.mark.parametrize("env", envs_to_test)
+def test_brax_render_solution_to_binary_io(env):
     """Test rendering the benchmark, saving to a binary IO."""
-    benchmark = Reacher(
-        horizon=10,
-    )
+    benchmark = Brax(task=env, horizon=10)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     benchmark.render_solution(initial_guess, io.BytesIO())
 
 
 @pytest.mark.slow
-def test_reacher_render_solution_to_file(tmpdir):
+@pytest.mark.parametrize("env", envs_to_test)
+def test_brax_render_solution_to_file(env, tmpdir):
     """Test rendering the benchmark, saving to a file."""
     # Save to a temporary directory for testing
     save_path = tmpdir.join("test_render.gif").strpath
 
-    benchmark = Reacher(horizon=10)
+    benchmark = Brax(task=env, horizon=10)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     benchmark.render_solution(initial_guess, save_path)

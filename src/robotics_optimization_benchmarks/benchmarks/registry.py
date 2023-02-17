@@ -4,8 +4,8 @@ from beartype.typing import Dict
 from beartype.typing import Type
 
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
+from robotics_optimization_benchmarks.benchmarks.brax import Brax
 from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
-from robotics_optimization_benchmarks.benchmarks.reacher import Reacher
 
 
 # Make a registry to store the benchmarks
@@ -13,7 +13,7 @@ from robotics_optimization_benchmarks.benchmarks.reacher import Reacher
 # access to it using public functions to mitigate some of the risk
 _benchmark_registry: Dict[str, Type[Benchmark]] = {
     Quadratic.name: Quadratic,
-    Reacher.name: Reacher,
+    Brax.name: Brax,
 }
 
 

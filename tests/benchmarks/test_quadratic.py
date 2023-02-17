@@ -4,10 +4,17 @@ import io
 import jax.random as jrandom
 import pytest
 
+from robotics_optimization_benchmarks.benchmarks import make
 from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 
 
 dimensions_to_test = [1, 10, 100]
+
+
+def test_make_quadratic():
+    """Test making a quadratic benchmark from the registry."""
+    benchmark = make("quadratic")
+    assert benchmark == Quadratic
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
