@@ -10,7 +10,6 @@ from robotics_optimization_benchmarks.benchmarks.brax.brax import MLP
 from robotics_optimization_benchmarks.benchmarks.brax.brax import Brax
 
 
-mlp_depths_to_test = [2, 4]
 envs_to_test = [
     "ant",
     "halfcheetah",
@@ -30,11 +29,12 @@ def test_make_brax():
     assert benchmark == Brax
 
 
-@pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
+@pytest.mark.parametrize("in_size", [5, 10])
+@pytest.mark.parametrize("out_size", [2, 4])
+@pytest.mark.parametrize("policy_network_depth", [2, 4])
 @pytest.mark.parametrize("policy_network_width", [32, 64])
-def test_mlp(policy_network_depth, policy_network_width):
+def test_mlp(in_size, out_size, policy_network_depth, policy_network_width):
     """Test the MLP."""
-    in_size, out_size = 11, 2
     key = jrandom.PRNGKey(0)
     mlp = MLP(in_size, out_size, [policy_network_width] * policy_network_depth, key)
     assert mlp is not None
@@ -45,21 +45,19 @@ def test_mlp(policy_network_depth, policy_network_width):
 
 
 @pytest.mark.parametrize("env", envs_to_test)
-@pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_brax_init(env, policy_network_depth):
+def test_brax_init(env):
     """Test initializing the benchmark."""
-    benchmark = Brax(env, policy_network_depth=policy_network_depth)
+    benchmark = Brax(env)
     assert benchmark.task == env
 
 
 @pytest.mark.parametrize("env", envs_to_test)
-@pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_brax_from_dict(env, policy_network_depth):
+def test_brax_from_dict(env):
     """Test creating a brax benchmark from a dictionary."""
     benchmark = Brax.from_dict(
         {
             "task": env,
-            "policy_network_depth": policy_network_depth,
+            "policy_network_depth": 2,
             "policy_network_width": 32,
             "horizon": 100,
         }
@@ -68,10 +66,9 @@ def test_brax_from_dict(env, policy_network_depth):
 
 
 @pytest.mark.parametrize("env", envs_to_test)
-@pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_brax_sample_initial_guess(env, policy_network_depth):
+def test_brax_sample_initial_guess(env):
     """Test sampling an initial guess."""
-    benchmark = Brax(env, policy_network_depth=policy_network_depth)
+    benchmark = Brax(env)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
 
     # Make sure we can call the neural network
@@ -82,10 +79,9 @@ def test_brax_sample_initial_guess(env, policy_network_depth):
 
 
 @pytest.mark.parametrize("env", envs_to_test)
-@pytest.mark.parametrize("policy_network_depth", mlp_depths_to_test)
-def test_brax_evaluate_solution(env, policy_network_depth):
+def test_brax_evaluate_solution(env):
     """Test evaluating the benchmark."""
-    benchmark = Brax(env, horizon=10, policy_network_depth=policy_network_depth)
+    benchmark = Brax(env, horizon=10)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     value = benchmark.evaluate_solution(initial_guess)
 
