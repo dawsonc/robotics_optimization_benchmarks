@@ -1,4 +1,4 @@
-"""Define a benchmark for the 2-link reacher environment."""
+"""Define a benchmark for Brax physics environments."""
 
 from robotics_optimization_benchmarks.benchmarks.brax.brax import Brax
 
