@@ -68,10 +68,10 @@ class Ballistic(Benchmark):
         """
         # These parameters define the physics of the problem
         v_0 = 10.0  # m/s, initial ball velocity
-        dt = 0.01  # s, time step; pylint: disable=invalid-name
-        g = 9.81  # m/s^2, gravitational acceleration; pylint: disable=invalid-name
-        max_t_flight = v_0 * 2 / g  # s, maximum flight time
-        n_steps = int(max_t_flight / dt + 1)  # number of time steps
+        timestep = 0.01  # s, time step
+        gravity = 9.81  # m/s^2, gravitational acceleration
+        max_t_flight = v_0 * 2 / gravity  # s, maximum flight time
+        n_steps = int(max_t_flight / timestep + 1)  # number of time steps
 
         # The decision variables are the launch angles of the balls.
         # Convert that into initial velocity
@@ -90,9 +90,9 @@ class Ballistic(Benchmark):
             p_x, p_y, v_x, v_y = carry
 
             # Update states
-            p_x = p_x + dt * v_x
-            p_y = p_y + dt * v_y
-            v_y = v_y - dt * g
+            p_x = p_x + timestep * v_x
+            p_y = p_y + timestep * v_y
+            v_y = v_y - timestep * gravity
 
             # Check for collisions
             wall_collision = jnp.logical_and(
