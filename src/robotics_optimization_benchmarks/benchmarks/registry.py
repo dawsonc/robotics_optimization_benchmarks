@@ -3,6 +3,7 @@ from beartype import beartype
 from beartype.typing import Dict
 from beartype.typing import Type
 
+from robotics_optimization_benchmarks.benchmarks.ballistic import Ballistic
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
 from robotics_optimization_benchmarks.benchmarks.brax import Brax
 from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
@@ -12,8 +13,9 @@ from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 # WARNING: global mutable state is usually frowned upon, but here we'll manage
 # access to it using public functions to mitigate some of the risk
 _benchmark_registry: Dict[str, Type[Benchmark]] = {
-    Quadratic.name: Quadratic,
+    Ballistic.name: Ballistic,
     Brax.name: Brax,
+    Quadratic.name: Quadratic,
 }
 
 
