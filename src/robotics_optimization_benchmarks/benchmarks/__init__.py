@@ -17,8 +17,6 @@ If you add benchmarks as sub-modules here, you can register them in this __init_
 If you add benchmarks in another package, you can register them there.
 """
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
-from robotics_optimization_benchmarks.benchmarks.brax import Brax
-from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 from robotics_optimization_benchmarks.benchmarks.registry import make
 from robotics_optimization_benchmarks.benchmarks.registry import register
 
@@ -27,6 +25,4 @@ __all__ = [
     "make",
     "register",
     "Benchmark",
-    "Quadratic",
-    "Brax",
 ]
