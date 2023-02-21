@@ -17,6 +17,7 @@ If you add optimizers as sub-modules here, you can register them in this __init_
 If you add optimizers in another package, you can register them there.
 """
 from robotics_optimization_benchmarks.optimizers.optimizer import Optimizer
+from robotics_optimization_benchmarks.optimizers.optimizer import OptimizerState
 from robotics_optimization_benchmarks.optimizers.registry import make
 from robotics_optimization_benchmarks.optimizers.registry import register
 
@@ -25,4 +26,5 @@ __all__ = [
     "make",
     "register",
     "Optimizer",
+    "OptimizerState",
 ]
