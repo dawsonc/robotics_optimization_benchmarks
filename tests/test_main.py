@@ -5,8 +5,8 @@ from click.testing import CliRunner
 from robotics_optimization_benchmarks import __main__
 
 
-@pytest.fixture
-def runner() -> CliRunner:
+@pytest.fixture(name="runner")
+def fixture_runner() -> CliRunner:
     """Fixture for invoking command-line interfaces."""
     return CliRunner()
 

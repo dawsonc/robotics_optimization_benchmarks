@@ -11,7 +11,7 @@ from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
 
-from robotics_optimization_benchmarks.benchmarks.benchmark import DecisionVariable
+from robotics_optimization_benchmarks.types import DecisionVariable
 from robotics_optimization_benchmarks.types import PRNGKeyArray
 
 
@@ -23,18 +23,16 @@ class OptimizerState(NamedTuple):
     Attributes:
         objective_fn: the objective function to minimize.
         solution: the current solution.
-        objective: the current objective value.
         cumulative_objective_calls: the cumulative number of objective function calls.
-        cumulative_objective_gradient_calls: the cumulative number of evaluations of
-            the gradient of the objective function.
+        cumulative_gradient_calls: the cumulative number of evaluations of the gradient
+            of the objective function.
     """
 
     objective_fn: Callable[[DecisionVariable], Float[Array, ""]]
     solution: DecisionVariable
-    objective: Float[Array, ""]
 
     cumulative_objective_calls: int = 0
-    cumulative_objective_gradient_calls: int = 0
+    cumulative_gradient_calls: int = 0
 
 
 class Optimizer(ABC):

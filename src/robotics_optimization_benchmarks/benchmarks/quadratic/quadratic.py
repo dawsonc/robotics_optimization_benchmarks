@@ -9,7 +9,7 @@ from jaxtyping import Float
 from jaxtyping import jaxtyped
 
 from robotics_optimization_benchmarks.benchmarks import Benchmark
-from robotics_optimization_benchmarks.benchmarks.benchmark import DecisionVariable
+from robotics_optimization_benchmarks.types import DecisionVariable
 from robotics_optimization_benchmarks.types import PRNGKeyArray
 
 

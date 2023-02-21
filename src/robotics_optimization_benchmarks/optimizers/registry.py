@@ -3,6 +3,7 @@ from beartype import beartype
 from beartype.typing import Dict
 from beartype.typing import Type
 
+from robotics_optimization_benchmarks.optimizers.gd import GD
 from robotics_optimization_benchmarks.optimizers.optimizer import Optimizer
 
 
@@ -12,7 +13,7 @@ from robotics_optimization_benchmarks.optimizers.optimizer import Optimizer
 _optimizer_registry: Dict[str, Type[Optimizer]] = {}
 
 
-# Define public functions for accessing the benchmark registry
+# Define public functions for accessing the optimizer registry
 @beartype
 def make(name: str) -> Type[Optimizer]:
     """Access an optimizer stored in the registry.
@@ -37,16 +38,23 @@ def make(name: str) -> Type[Optimizer]:
 
 
 @beartype
-def register(name: str, benchmark: Type[Optimizer]) -> None:
+def register(name: str, optimizer: Type[Optimizer]) -> None:
     """Register an optimizer with the given name.
 
     Args:
         name: the name to register the optimizer under.
-        optimzer: the optimzer class to register.
+        optimizer: the optimzer class to register.
 
     Raises:
         ValueError: if there is already a optimizer registered under this name.
     """
     if name in _optimizer_registry:
         raise ValueError(f"Optimizer {name} is already registered!")
-    _optimizer_registry[name] = benchmark
+    _optimizer_registry[name] = optimizer
+
+
+###############################################################################
+# Register built-in optimizers
+###############################################################################
+
+register(GD.name, GD)
