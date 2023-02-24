@@ -1,4 +1,5 @@
 """Define common tests that should be run on each optimizer."""
+import jax
 import jax.random as jrandom
 import pytest
 from chex import assert_trees_all_close
@@ -10,6 +11,9 @@ from robotics_optimization_benchmarks.optimizers import make
 # Define a list of optimizers that we should test, in the format (name, param_dict)
 optimizers_to_test = [
     ("GD", {}),
+    ("MCMC", {"use_gradients": True, "use_metropolis": True}),  # MALA
+    ("MCMC", {"use_gradients": True, "use_metropolis": False}),  # ULA
+    ("MCMC", {"use_gradients": False, "use_metropolis": True}),  # RMH
 ]
 
 
@@ -41,7 +45,25 @@ def test_optimizer_init(optimizer_name, params, quadratic_benchmark):
 
     key = jrandom.PRNGKey(0)
     initial_guess = quadratic_benchmark.sample_initial_guess(key)
-    state = optimizer.init(quadratic_benchmark.evaluate_solution, initial_guess)
+    state, step = optimizer.init(quadratic_benchmark.evaluate_solution, initial_guess)
 
     assert state is not None
     assert_trees_all_close(state.solution, initial_guess)
+    assert step is not None
+
+
+@pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
+@pytest.mark.parametrize("variant", [jax.jit, lambda f: f])  # test with and without jit
+def test_optimizer_step(optimizer_name, params, variant, quadratic_benchmark):
+    """Test stepping the optimizer."""
+    optimizer = make(optimizer_name).from_dict(params)
+
+    key = jrandom.PRNGKey(0)
+    initial_guess = quadratic_benchmark.sample_initial_guess(key)
+    state, step = optimizer.init(quadratic_benchmark.evaluate_solution, initial_guess)
+
+    # Run the step function a few times to make sure it's self-compatible
+    for _ in range(10):
+        state = variant(step)(state, key)
+
+    assert state is not None

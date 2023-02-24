@@ -2,11 +2,12 @@
 from abc import ABC
 from abc import abstractmethod
 
+import chex
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Callable
 from beartype.typing import Dict
-from beartype.typing import NamedTuple
+from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -15,24 +16,22 @@ from robotics_optimization_benchmarks.types import DecisionVariable
 from robotics_optimization_benchmarks.types import PRNGKeyArray
 
 
-class OptimizerState(NamedTuple):
+@chex.dataclass
+class OptimizerState:
     """A struct for storing the state of an optimizer.
 
     Subclasses of `Optimizer` may define specialized subclasses of `OptimizerState`
 
     Attributes:
-        objective_fn: the objective function to minimize.
         solution: the current solution.
         cumulative_objective_calls: the cumulative number of objective function calls.
         cumulative_gradient_calls: the cumulative number of evaluations of the gradient
             of the objective function.
     """
 
-    objective_fn: Callable[[DecisionVariable], Float[Array, ""]]
     solution: DecisionVariable
-
-    cumulative_objective_calls: int = 0
-    cumulative_gradient_calls: int = 0
+    cumulative_objective_calls: int
+    cumulative_gradient_calls: int
 
 
 class Optimizer(ABC):
@@ -51,6 +50,12 @@ class Optimizer(ABC):
     def name(cls) -> str:
         """Get the name of the optimizer."""
         return cls._name
+
+    @property
+    @beartype
+    def description(self) -> str:
+        """Get a string description of this optimizer."""
+        return self.name
 
     @classmethod
     @beartype
@@ -71,12 +76,14 @@ class Optimizer(ABC):
     @abstractmethod
     @jaxtyped
     @beartype
-    def init(
+    def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
         initial_solution: DecisionVariable,
-    ) -> OptimizerState:
-        """Initialize the state of the optimizer.
+    ) -> Tuple[
+        OptimizerState, Callable[[OptimizerState, PRNGKeyArray], OptimizerState]
+    ]:
+        """Initialize the state of the optimizer and return the step function.
 
         Args:
             objective_fn: the objective function to minimize.
@@ -84,25 +91,8 @@ class Optimizer(ABC):
 
         Returns:
             The initial state of the optimizer.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    @jaxtyped
-    @beartype
-    def step(
-        self,
-        state: OptimizerState,
-        rng_key: PRNGKeyArray,
-    ) -> OptimizerState:
-        """Take one step towards minimizing the objective.
-
-        Args:
-            state: the current state of the optimizer.
-            rng_key: a random number generator key.
-
-        Returns:
-            The solution to the optimization problem.
-            The trace of solutions at each step of the optimization process
+            A function that takes the current state of the optimizer and a PRNG key
+                and returns the next state of the optimizer, executing one step of the
+                optimization algorithm.
         """
         raise NotImplementedError
