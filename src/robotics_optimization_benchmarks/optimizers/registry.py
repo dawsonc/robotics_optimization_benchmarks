@@ -6,6 +6,7 @@ from beartype.typing import Type
 from robotics_optimization_benchmarks.optimizers.gd import GD
 from robotics_optimization_benchmarks.optimizers.mcmc import MCMC
 from robotics_optimization_benchmarks.optimizers.optimizer import Optimizer
+from robotics_optimization_benchmarks.optimizers.vpg import VPG
 
 
 # Make a registry to store the optimizers
@@ -60,3 +61,4 @@ def register(name: str, optimizer: Type[Optimizer]) -> None:
 
 register(GD.name, GD)
 register(MCMC.name, MCMC)
+register(VPG.name, VPG)

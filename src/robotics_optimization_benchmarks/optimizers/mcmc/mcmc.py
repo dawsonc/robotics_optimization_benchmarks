@@ -142,7 +142,8 @@ class MCMC(Optimizer):
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
         initial_solution: DecisionVariable,
     ) -> Tuple[
-        OptimizerState, Callable[[OptimizerState, PRNGKeyArray], OptimizerState]
+        MCMCOptimizerState,
+        Callable[[MCMCOptimizerState, PRNGKeyArray], MCMCOptimizerState],
     ]:
         """Initialize the state of the optimizer and return the step function.
 
@@ -158,7 +159,7 @@ class MCMC(Optimizer):
         """
         # Convert the objective function to a log density function by negating it
         # This means that low costs -> high densitites -> more likely samples
-        logdensity_fn = lambda x: -objective_fn(x)
+        logdensity_fn = lambda x: -objective_fn(x)  # pylint: disable-all
 
         # Wrap the objective function to return its value and gradient, then get
         # the initial objective value and gradient (caching these in the state
@@ -178,7 +179,9 @@ class MCMC(Optimizer):
         # Define the step function (baking in the objective and gradient functions).
         @jaxtyped
         @beartype
-        def step(state: OptimizerState, prng_key: PRNGKeyArray) -> OptimizerState:
+        def step(
+            state: MCMCOptimizerState, prng_key: PRNGKeyArray
+        ) -> MCMCOptimizerState:
             """Take one step of the MCMC sampler.
 
             Args:

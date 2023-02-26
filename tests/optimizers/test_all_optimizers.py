@@ -14,6 +14,7 @@ optimizers_to_test = [
     ("MCMC", {"use_gradients": True, "use_metropolis": True}),  # MALA
     ("MCMC", {"use_gradients": True, "use_metropolis": False}),  # ULA
     ("MCMC", {"use_gradients": False, "use_metropolis": True}),  # RMH
+    ("VPG", {}),
 ]
 
 
