@@ -10,6 +10,7 @@ from robotics_optimization_benchmarks.optimizers import make
 
 # Define a list of optimizers that we should test, in the format (name, param_dict)
 optimizers_to_test = [
+    ("BGD", {}),
     ("GD", {}),
     ("MCMC", {"use_gradients": True, "use_metropolis": True}),  # MALA
     ("MCMC", {"use_gradients": True, "use_metropolis": False}),  # ULA

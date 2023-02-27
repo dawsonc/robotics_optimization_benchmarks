@@ -3,6 +3,7 @@ from beartype import beartype
 from beartype.typing import Dict
 from beartype.typing import Type
 
+from robotics_optimization_benchmarks.optimizers.bgd import BGD
 from robotics_optimization_benchmarks.optimizers.gd import GD
 from robotics_optimization_benchmarks.optimizers.mcmc import MCMC
 from robotics_optimization_benchmarks.optimizers.optimizer import Optimizer
@@ -59,6 +60,7 @@ def register(name: str, optimizer: Type[Optimizer]) -> None:
 # Register built-in optimizers
 ###############################################################################
 
+register(BGD.name, BGD)
 register(GD.name, GD)
 register(MCMC.name, MCMC)
 register(VPG.name, VPG)
