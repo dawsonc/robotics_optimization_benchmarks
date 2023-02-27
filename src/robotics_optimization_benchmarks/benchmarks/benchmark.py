@@ -8,14 +8,10 @@ from beartype.typing import BinaryIO
 from beartype.typing import Dict
 from jaxtyping import Array
 from jaxtyping import Float
-from jaxtyping import PyTree
 from jaxtyping import jaxtyped
 
+from robotics_optimization_benchmarks.types import DecisionVariable
 from robotics_optimization_benchmarks.types import PRNGKeyArray
-
-
-# Define a convenience type for decision variables
-DecisionVariable = PyTree[Float[Array, "..."]]
 
 
 class Benchmark(ABC):

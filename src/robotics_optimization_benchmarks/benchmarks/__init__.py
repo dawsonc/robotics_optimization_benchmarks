@@ -13,12 +13,11 @@ Benchmarks can be registered using the `register` function.
 
     benchmarks.register("super_cool_benchmark", Benchmark)  # Register class not instance!
 
-If you add benchmarks as sub-modules here, you can register them in this __init__ file.
+If you add benchmarks as sub-modules here, you can register them in the
+    benchmarks.registry file.
 If you add benchmarks in another package, you can register them there.
 """
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
-from robotics_optimization_benchmarks.benchmarks.brax import Brax
-from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 from robotics_optimization_benchmarks.benchmarks.registry import make
 from robotics_optimization_benchmarks.benchmarks.registry import register
 
@@ -27,6 +26,4 @@ __all__ = [
     "make",
     "register",
     "Benchmark",
-    "Quadratic",
-    "Brax",
 ]

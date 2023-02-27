@@ -138,8 +138,8 @@ class Ballistic(Benchmark):
         """
         (final_x, _, _, _), _ = self.simulate(solution)
 
-        # The cost here is the negative mean distance travelled by the balls
-        return -final_x.mean()
+        # The cost here is the negative total distance travelled by the balls
+        return -final_x.sum()
 
     def render_solution(
         self, solution: Float[Array, " dimension"], save_to: str | BinaryIO

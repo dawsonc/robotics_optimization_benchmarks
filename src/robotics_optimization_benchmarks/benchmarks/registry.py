@@ -12,11 +12,7 @@ from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 # Make a registry to store the benchmarks
 # WARNING: global mutable state is usually frowned upon, but here we'll manage
 # access to it using public functions to mitigate some of the risk
-_benchmark_registry: Dict[str, Type[Benchmark]] = {
-    Ballistic.name: Ballistic,
-    Brax.name: Brax,
-    Quadratic.name: Quadratic,
-}
+_benchmark_registry: Dict[str, Type[Benchmark]] = {}
 
 
 # Define public functions for accessing the benchmark registry
@@ -57,3 +53,12 @@ def register(name: str, benchmark: Type[Benchmark]) -> None:
     if name in _benchmark_registry:
         raise ValueError(f"Benchmark {name} is already registered!")
     _benchmark_registry[name] = benchmark
+
+
+###############################################################################
+# Register built-in benchmarks
+###############################################################################
+
+register(Ballistic.name, Ballistic)
+register(Brax.name, Brax)
+register(Quadratic.name, Quadratic)
