@@ -51,7 +51,7 @@ class VPG(Optimizer):
     @beartype
     def __init__(
         self,
-        step_size: float = 0.01,
+        step_size: float = 1e-3,
         perturbation_stddev: float = 0.1,
         baseline_update_rate: float = 0.5,
     ):
@@ -71,7 +71,7 @@ class VPG(Optimizer):
 
     @jaxtyped
     @beartype
-    def init(
+    def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
         initial_solution: DecisionVariable,
@@ -114,13 +114,13 @@ class VPG(Optimizer):
             """
             # Perturb the solution with noise of the same shape
             flat_solution, unravel_fn = jax.flatten_util.ravel_pytree(state.solution)
-            noise = jrandom.normal(
+            noise = self._perturbation_stddev * jrandom.normal(
                 key, shape=flat_solution.shape, dtype=flat_solution.dtype
             )
             # Re-shape to match solution and perturb
             beta = unravel_fn(noise)
             perturbed_solution = jtu.tree_map(
-                lambda x, beta: x + self._perturbation_stddev * beta,
+                lambda x, beta: x + beta,
                 state.solution,
                 beta,
             )

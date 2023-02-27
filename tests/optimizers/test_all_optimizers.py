@@ -3,10 +3,14 @@ import jax
 import jax.random as jrandom
 import pytest
 from chex import assert_trees_all_close
+from jax.config import config as jconfig
 
 from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 from robotics_optimization_benchmarks.optimizers import make
 
+
+# Turn on NaN checking
+jconfig.update("jax_debug_nans", True)
 
 # Define a list of optimizers that we should test, in the format (name, param_dict)
 optimizers_to_test = [
@@ -41,13 +45,22 @@ def test_optimizer_from_dict(optimizer_name, params):
 
 
 @pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
-def test_optimizer_init(optimizer_name, params, quadratic_benchmark):
+def test_optimizer_description(optimizer_name, params):
+    """Test that the optimizer description exists."""
+    optimizer = make(optimizer_name).from_dict(params)
+    assert optimizer.description is not None
+
+
+@pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
+def test_optimizer_make_step(optimizer_name, params, quadratic_benchmark):
     """Test initialization of optimizer state."""
     optimizer = make(optimizer_name).from_dict(params)
 
     key = jrandom.PRNGKey(0)
     initial_guess = quadratic_benchmark.sample_initial_guess(key)
-    state, step = optimizer.init(quadratic_benchmark.evaluate_solution, initial_guess)
+    state, step = optimizer.make_step(
+        quadratic_benchmark.evaluate_solution, initial_guess
+    )
 
     assert state is not None
     assert_trees_all_close(state.solution, initial_guess)
@@ -62,10 +75,39 @@ def test_optimizer_step(optimizer_name, params, variant, quadratic_benchmark):
 
     key = jrandom.PRNGKey(0)
     initial_guess = quadratic_benchmark.sample_initial_guess(key)
-    state, step = optimizer.init(quadratic_benchmark.evaluate_solution, initial_guess)
+    state, step = optimizer.make_step(
+        quadratic_benchmark.evaluate_solution, initial_guess
+    )
 
     # Run the step function a few times to make sure it's self-compatible
     for _ in range(10):
         state = variant(step)(state, key)
 
     assert state is not None
+
+
+@pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
+def test_optimizer_optimization(optimizer_name, params, quadratic_benchmark):
+    """Test that the optimizer can minimize a simple convex function."""
+    # Initialize the optimizer and JIT the step function
+    optimizer = make(optimizer_name).from_dict(params)
+    key = jrandom.PRNGKey(0)
+    initial_guess = quadratic_benchmark.sample_initial_guess(key)
+
+    state, step = optimizer.make_step(
+        quadratic_benchmark.evaluate_solution, initial_guess
+    )
+    step = jax.jit(step)
+
+    # Run the optimization loop for a fixed number of steps
+    n_steps = 1000
+    for _ in range(n_steps):
+        subkey, key = jrandom.split(key)
+        state = step(state, subkey)
+
+    # We should find a solution with a lower objective value than the initial guess
+    minimum_acceptable_decrease = 0.9  # we expect at least a 90% decrease
+    final_objective = quadratic_benchmark.evaluate_solution(state.solution)
+    initial_objective = quadratic_benchmark.evaluate_solution(initial_guess)
+
+    assert final_objective < minimum_acceptable_decrease * initial_objective

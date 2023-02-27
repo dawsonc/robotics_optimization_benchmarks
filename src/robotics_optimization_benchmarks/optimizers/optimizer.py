@@ -95,4 +95,3 @@ class Optimizer(ABC):
                 key and returns the next state of the optimizer, executing one step of
                 the optimization algorithm.
         """
-        raise NotImplementedError

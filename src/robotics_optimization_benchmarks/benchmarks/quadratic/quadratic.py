@@ -18,7 +18,7 @@ class Quadratic(Benchmark):
 
     Mimizes the problem
 
-    U(x) = x^T x / n
+    U(x) = x^T x
 
     with x in R^n. Not intended to be a challenging problem, but rather a simple test
     case for optimizers.
@@ -65,7 +65,7 @@ class Quadratic(Benchmark):
         Returns:
             The objective function evaluated at the given solution.
         """
-        return jnp.dot(solution, solution) / self.dimension
+        return jnp.dot(solution, solution)
 
     def render_solution(
         self, solution: DecisionVariable, save_to: str | BinaryIO

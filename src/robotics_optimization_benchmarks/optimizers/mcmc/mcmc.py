@@ -137,7 +137,7 @@ class MCMC(Optimizer):
 
     @jaxtyped
     @beartype
-    def init(
+    def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
         initial_solution: DecisionVariable,
