@@ -1,4 +1,4 @@
-"""Define a gradient descent optimizer."""
+"""Implement a gradient descent optimizer."""
 
 from robotics_optimization_benchmarks.optimizers.gd.gd import GD
 

@@ -36,6 +36,10 @@ class VPG(Optimizer):
     """Minimize an objective function using the vanilla policy gradient algorithm.
 
     Uses a moving average of all previously-observed costs as the baseline.
+
+    This is equivalent to the "weight perturbation with an estimated baseline" algorithm
+    referenced `here <https://underactuated.mit.edu/rl_policy_search.html>`_, or it
+    could be seen as a variant of the vanilla policy gradient algorithm.
     """
 
     _name: str = "VPG"
@@ -82,10 +86,10 @@ class VPG(Optimizer):
             initial_solution: the initial solution.
 
         Returns:
-            The initial state of the optimizer.
-            A function that takes the current state of the optimizer and a PRNG key
-                and returns the next state of the optimizer, executing one step of the
-                optimization algorithm.
+            initial_state: The initial state of the optimizer.
+            step_fn: A function that takes the current state of the optimizer and a PRNG
+                key and returns the next state of the optimizer, executing one step of
+                the optimization algorithm.
         """
         # Create the initial state of the optimizer.
         initial_state = VPGOptimizerState(

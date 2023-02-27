@@ -17,7 +17,17 @@ from robotics_optimization_benchmarks.types import PRNGKeyArray
 
 
 class BGD(Optimizer):
-    """Minimize an objective function using batched-gradient descent."""
+    """Minimize an objective function using batched-gradient descent.
+
+    Applies the batched-gradient descent algorithm, which is equivalent to the
+    "weight-perturbation" algorithm referenced
+    `here <underactuated.mit.edu/rl_policy_search.html>`_ but averaging over
+    :code:`n_samples` perturbed samples to reduce the variance of the estimate.
+
+    This optimizer does not use gradients, but uses `n_samples + 1` objective
+    evaluations per step (because we use the exact objective value at the current
+    solution as our baseline).
+    """
 
     _name: str = "BGD"
 
@@ -57,10 +67,10 @@ class BGD(Optimizer):
             initial_solution: the initial solution.
 
         Returns:
-            The initial state of the optimizer.
-            A function that takes the current state of the optimizer and a PRNG key
-                and returns the next state of the optimizer, executing one step of the
-                optimization algorithm.
+            initial_state: The initial state of the optimizer.
+            step_fn: A function that takes the current state of the optimizer and a PRNG
+                key and returns the next state of the optimizer, executing one step of
+                the optimization algorithm.
         """
         # Create the initial state of the optimizer.
         initial_state = OptimizerState(
