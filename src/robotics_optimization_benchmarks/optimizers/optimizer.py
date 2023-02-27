@@ -74,6 +74,11 @@ class Optimizer(ABC):
         return cls(**params)
 
     @abstractmethod
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+
+    @abstractmethod
     @jaxtyped
     @beartype
     def make_step(

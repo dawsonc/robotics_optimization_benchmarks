@@ -45,6 +45,17 @@ def test_optimizer_from_dict(optimizer_name, params):
 
 
 @pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
+def test_optimizer_to_dict(optimizer_name, params):
+    """Test optimizer to dictionary."""
+    optimizer = make(optimizer_name).from_dict(params)
+    optimizer_params = optimizer.to_dict()
+    # The parameters passed to from_dict should be a subset of those returned by
+    # to_dict, since there may be default parameters not specified in from_dict
+    assert all(key in optimizer_params for key in params)
+    assert all(optimizer_params[key] == value for key, value in params)
+
+
+@pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
 def test_optimizer_description(optimizer_name, params):
     """Test that the optimizer description exists."""
     optimizer = make(optimizer_name).from_dict(params)

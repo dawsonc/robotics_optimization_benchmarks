@@ -53,6 +53,11 @@ class Benchmark(ABC):
         return cls(**params)
 
     @abstractmethod
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize the benchmark."""
+
+    @abstractmethod
     @jaxtyped
     @beartype
     def sample_initial_guess(self, key: PRNGKeyArray) -> DecisionVariable:

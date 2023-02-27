@@ -4,7 +4,9 @@ import jax.numpy as jnp
 import jax.random as jrandom
 import jax.tree_util as jtu
 from beartype import beartype
+from beartype.typing import Any
 from beartype.typing import Callable
+from beartype.typing import Dict
 from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
@@ -50,6 +52,15 @@ class BGD(Optimizer):
         self._step_size = step_size
         self._smoothing_std = smoothing_std
         self._n_samples = n_samples
+
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+        return {
+            "step_size": self._step_size,
+            "smoothing_std": self._smoothing_std,
+            "n_samples": self._n_samples,
+        }
 
     @jaxtyped
     @beartype

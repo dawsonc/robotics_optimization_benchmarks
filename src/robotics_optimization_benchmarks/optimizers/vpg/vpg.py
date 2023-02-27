@@ -69,6 +69,15 @@ class VPG(Optimizer):
         self._perturbation_stddev = perturbation_stddev
         self._baseline_update_rate = baseline_update_rate
 
+    @beartype
+    def to_dict(self) -> dict:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+        return {
+            "step_size": self._step_size,
+            "perturbation_stddev": self._perturbation_stddev,
+            "baseline_update_rate": self._baseline_update_rate,
+        }
+
     @jaxtyped
     @beartype
     def make_step(

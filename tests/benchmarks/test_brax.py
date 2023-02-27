@@ -66,6 +66,14 @@ def test_brax_from_dict(env):
 
 
 @pytest.mark.parametrize("env", envs_to_test)
+def test_brax_to_dict(env):
+    """Test converting a brax benchmark to a dictionary."""
+    benchmark = Brax(env)
+    benchmark_dict = benchmark.to_dict()
+    assert benchmark_dict["task"] == env
+
+
+@pytest.mark.parametrize("env", envs_to_test)
 def test_brax_sample_initial_guess(env):
     """Test sampling an initial guess."""
     benchmark = Brax(env)

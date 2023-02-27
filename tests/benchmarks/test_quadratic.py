@@ -26,6 +26,13 @@ def test_quadratic_init(dimension: int):
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
+def test_quadratic_to_dict(dimension: int):
+    """Test quadratic benchmark to dict."""
+    benchmark = Quadratic(dimension=dimension)
+    assert benchmark.to_dict() == {"dimension": dimension}
+
+
+@pytest.mark.parametrize("dimension", dimensions_to_test)
 def test_quadratic_from_dict(dimension: int):
     """Test creating a quadratic benchmark from a dictionary."""
     benchmark = Quadratic.from_dict({"dimension": dimension})

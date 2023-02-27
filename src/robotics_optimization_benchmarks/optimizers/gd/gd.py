@@ -3,7 +3,7 @@ import jax
 import jax.tree_util as jtu
 from beartype import beartype
 from beartype.typing import Callable
-from beartype.typing import Tuple
+from beartype.typing import Tuple, Dict, Any
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -28,6 +28,11 @@ class GD(Optimizer):
         """
         super().__init__()
         self._step_size = step_size
+
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+        return {"step_size": self._step_size}
 
     @jaxtyped
     @beartype
