@@ -962,18 +962,18 @@ Six = "*"
 
 [[package]]
 name = "flax"
-version = "0.6.4"
+version = "0.6.6"
 description = "Flax: A neural network library for JAX designed for flexibility"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "flax-0.6.4-py3-none-any.whl", hash = "sha256:fe5010525202241fdc960920033d2e4c0b35f06090c1ad9e280b1f4415ae308f"},
-    {file = "flax-0.6.4.tar.gz", hash = "sha256:d06465a3e6636c3c23c29f651a13f5367d06c41373b441dc8ec1bfaa4db06a48"},
+    {file = "flax-0.6.6-py3-none-any.whl", hash = "sha256:bad91854c6e2f975e29ddae838f48e9d685d119c7ce9f464d45e54a8f2945426"},
+    {file = "flax-0.6.6.tar.gz", hash = "sha256:dd76fe88eeaaac47aea4bd650bb419fc5412f1d561b6321ca0136723b4b51c78"},
 ]
 
 [package.dependencies]
-jax = ">=0.3.16"
+jax = ">=0.4.2"
 matplotlib = "*"
 msgpack = "*"
 numpy = ">=1.12"
@@ -985,7 +985,7 @@ tensorstore = "*"
 typing-extensions = ">=4.1.1"
 
 [package.extras]
-testing = ["atari-py (==0.2.5)", "clu", "gym (==0.18.3)", "jaxlib", "jraph (>=0.0.6dev0)", "ml-collections", "mypy", "opencv-python", "pytest", "pytest-cov", "pytest-custom-exit-code", "pytest-xdist (==1.34.0)", "pytype", "sentencepiece", "tensorflow", "tensorflow-datasets", "tensorflow-text (>=2.4.0)", "torch"]
+testing = ["atari-py (==0.2.5)", "clu", "gym (==0.18.3)", "jaxlib", "jraph (>=0.0.6dev0)", "ml-collections", "mypy", "nbstripout", "opencv-python", "pytest", "pytest-cov", "pytest-custom-exit-code", "pytest-xdist (==1.34.0)", "pytype", "sentencepiece", "tensorflow", "tensorflow-datasets", "tensorflow-text (>=2.11.0)", "torch"]
 
 [[package]]
 name = "fonttools"
