@@ -80,18 +80,15 @@ tests-no-zope = ["cloudpickle", "cloudpickle", "hypothesis", "hypothesis", "mypy
 
 [[package]]
 name = "babel"
-version = "2.11.0"
+version = "2.12.1"
 description = "Internationalization utilities"
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "Babel-2.11.0-py3-none-any.whl", hash = "sha256:1ad3eca1c885218f6dce2ab67291178944f810a10a9b5f3cb8382a5a232b64fe"},
-    {file = "Babel-2.11.0.tar.gz", hash = "sha256:5ef4b3226b0180dedded4229651c8b0e1a3a6a2837d45a073272f313e4cf97f6"},
+    {file = "Babel-2.12.1-py3-none-any.whl", hash = "sha256:b4246fb7677d3b98f501a39d43396d3cafdc8eadb045f4a31be01863f655c610"},
+    {file = "Babel-2.12.1.tar.gz", hash = "sha256:cc2d99999cd01d44420ae725a21c9e3711b3aadc7976d6147f622d8581963455"},
 ]
-
-[package.dependencies]
-pytz = ">=2015.7"
 
 [[package]]
 name = "bandit"
@@ -965,18 +962,18 @@ Six = "*"
 
 [[package]]
 name = "flax"
-version = "0.6.4"
+version = "0.6.6"
 description = "Flax: A neural network library for JAX designed for flexibility"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "flax-0.6.4-py3-none-any.whl", hash = "sha256:fe5010525202241fdc960920033d2e4c0b35f06090c1ad9e280b1f4415ae308f"},
-    {file = "flax-0.6.4.tar.gz", hash = "sha256:d06465a3e6636c3c23c29f651a13f5367d06c41373b441dc8ec1bfaa4db06a48"},
+    {file = "flax-0.6.6-py3-none-any.whl", hash = "sha256:bad91854c6e2f975e29ddae838f48e9d685d119c7ce9f464d45e54a8f2945426"},
+    {file = "flax-0.6.6.tar.gz", hash = "sha256:dd76fe88eeaaac47aea4bd650bb419fc5412f1d561b6321ca0136723b4b51c78"},
 ]
 
 [package.dependencies]
-jax = ">=0.3.16"
+jax = ">=0.4.2"
 matplotlib = "*"
 msgpack = "*"
 numpy = ">=1.12"
@@ -988,7 +985,7 @@ tensorstore = "*"
 typing-extensions = ">=4.1.1"
 
 [package.extras]
-testing = ["atari-py (==0.2.5)", "clu", "gym (==0.18.3)", "jaxlib", "jraph (>=0.0.6dev0)", "ml-collections", "mypy", "opencv-python", "pytest", "pytest-cov", "pytest-custom-exit-code", "pytest-xdist (==1.34.0)", "pytype", "sentencepiece", "tensorflow", "tensorflow-datasets", "tensorflow-text (>=2.4.0)", "torch"]
+testing = ["atari-py (==0.2.5)", "clu", "gym (==0.18.3)", "jaxlib", "jraph (>=0.0.6dev0)", "ml-collections", "mypy", "nbstripout", "opencv-python", "pytest", "pytest-cov", "pytest-custom-exit-code", "pytest-xdist (==1.34.0)", "pytype", "sentencepiece", "tensorflow", "tensorflow-datasets", "tensorflow-text (>=2.11.0)", "torch"]
 
 [[package]]
 name = "fonttools"
@@ -1883,30 +1880,30 @@ files = [
 
 [[package]]
 name = "myst-parser"
-version = "0.18.1"
-description = "An extended commonmark compliant parser, with bridges to docutils & sphinx."
+version = "0.19.0"
+description = "An extended [CommonMark](https://spec.commonmark.org/) compliant parser,"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "myst-parser-0.18.1.tar.gz", hash = "sha256:79317f4bb2c13053dd6e64f9da1ba1da6cd9c40c8a430c447a7b146a594c246d"},
-    {file = "myst_parser-0.18.1-py3-none-any.whl", hash = "sha256:61b275b85d9f58aa327f370913ae1bec26ebad372cc99f3ab85c8ec3ee8d9fb8"},
+    {file = "myst-parser-0.19.0.tar.gz", hash = "sha256:5a278c02015ce89f282dfde2a6e43d0924d957ab57d83555fce1645448810577"},
+    {file = "myst_parser-0.19.0-py3-none-any.whl", hash = "sha256:a71ef265d01ddc905590c3c840b8a9f38b5b48d6d2c43be3b85ad130f5fd896d"},
 ]
 
 [package.dependencies]
 docutils = ">=0.15,<0.20"
 jinja2 = "*"
 markdown-it-py = ">=1.0.0,<3.0.0"
-mdit-py-plugins = ">=0.3.1,<0.4.0"
+mdit-py-plugins = ">=0.3.4,<0.4.0"
 pyyaml = "*"
-sphinx = ">=4,<6"
-typing-extensions = "*"
+sphinx = ">=5,<7"
 
 [package.extras]
-code-style = ["pre-commit (>=2.12,<3.0)"]
+code-style = ["pre-commit (>=3.0,<4.0)"]
 linkify = ["linkify-it-py (>=1.0,<2.0)"]
-rtd = ["ipython", "sphinx-book-theme", "sphinx-design", "sphinxcontrib.mermaid (>=0.7.1,<0.8.0)", "sphinxext-opengraph (>=0.6.3,<0.7.0)", "sphinxext-rediraffe (>=0.2.7,<0.3.0)"]
-testing = ["beautifulsoup4", "coverage[toml]", "pytest (>=6,<7)", "pytest-cov", "pytest-param-files (>=0.3.4,<0.4.0)", "pytest-regressions", "sphinx (<5.2)", "sphinx-pytest"]
+rtd = ["ipython", "pydata-sphinx-theme (==v0.13.0rc4)", "sphinx-autodoc2 (>=0.4.2,<0.5.0)", "sphinx-book-theme (==1.0.0rc2)", "sphinx-copybutton", "sphinx-design2", "sphinx-pyscript", "sphinx-tippy (>=0.3.1)", "sphinx-togglebutton", "sphinxext-opengraph (>=0.7.5,<0.8.0)", "sphinxext-rediraffe (>=0.2.7,<0.3.0)"]
+testing = ["beautifulsoup4", "coverage[toml]", "pytest (>=7,<8)", "pytest-cov", "pytest-param-files (>=0.3.4,<0.4.0)", "pytest-regressions", "sphinx-pytest"]
+testing-docutils = ["pygments", "pytest (>=7,<8)", "pytest-param-files (>=0.3.4,<0.4.0)"]
 
 [[package]]
 name = "nodeenv"
@@ -2289,14 +2286,14 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "3.1.0"
+version = "3.1.1"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pre_commit-3.1.0-py2.py3-none-any.whl", hash = "sha256:7001dfcd174540658822b1fd3630ceadf4f41375a5d1844b5c3b3830f227348c"},
-    {file = "pre_commit-3.1.0.tar.gz", hash = "sha256:61bd9f1b96d3d1e763f2a9a0f8522aed341646800642ff6803c73fac5781f5b7"},
+    {file = "pre_commit-3.1.1-py2.py3-none-any.whl", hash = "sha256:b80254e60668e1dd1f5c03a1c9e0413941d61f568a57d745add265945f65bfe8"},
+    {file = "pre_commit-3.1.1.tar.gz", hash = "sha256:d63e6537f9252d99f65755ae5b79c989b462d511ebbc481b561db6a297e1e865"},
 ]
 
 [package.dependencies]
@@ -2791,6 +2788,28 @@ doc = ["matplotlib (>2)", "numpydoc", "pydata-sphinx-theme (==0.9.0)", "sphinx (
 test = ["asv", "gmpy2", "mpmath", "pytest", "pytest-cov", "pytest-xdist", "scikit-umfpack", "threadpoolctl"]
 
 [[package]]
+name = "seaborn"
+version = "0.12.2"
+description = "Statistical data visualization"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "seaborn-0.12.2-py3-none-any.whl", hash = "sha256:ebf15355a4dba46037dfd65b7350f014ceb1f13c05e814eda2c9f5fd731afc08"},
+    {file = "seaborn-0.12.2.tar.gz", hash = "sha256:374645f36509d0dcab895cba5b47daf0586f77bfe3b36c97c607db7da5be0139"},
+]
+
+[package.dependencies]
+matplotlib = ">=3.1,<3.6.1 || >3.6.1"
+numpy = ">=1.17,<1.24.0 || >1.24.0"
+pandas = ">=0.25"
+
+[package.extras]
+dev = ["flake8", "flit", "mypy", "pandas-stubs", "pre-commit", "pytest", "pytest-cov", "pytest-xdist"]
+docs = ["ipykernel", "nbconvert", "numpydoc", "pydata_sphinx_theme (==0.10.0rc2)", "pyyaml", "sphinx-copybutton", "sphinx-design", "sphinx-issues"]
+stats = ["scipy (>=1.3)", "statsmodels (>=0.10)"]
+
+[[package]]
 name = "setuptools"
 version = "67.4.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -2857,26 +2876,26 @@ files = [
 
 [[package]]
 name = "sphinx"
-version = "5.3.0"
+version = "6.1.3"
 description = "Python documentation generator"
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 files = [
-    {file = "Sphinx-5.3.0.tar.gz", hash = "sha256:51026de0a9ff9fc13c05d74913ad66047e104f56a129ff73e174eb5c3ee794b5"},
-    {file = "sphinx-5.3.0-py3-none-any.whl", hash = "sha256:060ca5c9f7ba57a08a1219e547b269fadf125ae25b06b9fa7f66768efb652d6d"},
+    {file = "Sphinx-6.1.3.tar.gz", hash = "sha256:0dac3b698538ffef41716cf97ba26c1c7788dba73ce6f150c1ff5b4720786dd2"},
+    {file = "sphinx-6.1.3-py3-none-any.whl", hash = "sha256:807d1cb3d6be87eb78a381c3e70ebd8d346b9a25f3753e9947e866b2786865fc"},
 ]
 
 [package.dependencies]
 alabaster = ">=0.7,<0.8"
 babel = ">=2.9"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
-docutils = ">=0.14,<0.20"
+docutils = ">=0.18,<0.20"
 imagesize = ">=1.3"
 Jinja2 = ">=3.0"
 packaging = ">=21.0"
-Pygments = ">=2.12"
-requests = ">=2.5.0"
+Pygments = ">=2.13"
+requests = ">=2.25.0"
 snowballstemmer = ">=2.0"
 sphinxcontrib-applehelp = "*"
 sphinxcontrib-devhelp = "*"
@@ -2887,8 +2906,8 @@ sphinxcontrib-serializinghtml = ">=1.1.5"
 
 [package.extras]
 docs = ["sphinxcontrib-websupport"]
-lint = ["docutils-stubs", "flake8 (>=3.5.0)", "flake8-bugbear", "flake8-comprehensions", "flake8-simplify", "isort", "mypy (>=0.981)", "sphinx-lint", "types-requests", "types-typed-ast"]
-test = ["cython", "html5lib", "pytest (>=4.6)", "typed_ast"]
+lint = ["docutils-stubs", "flake8 (>=3.5.0)", "flake8-simplify", "isort", "mypy (>=0.990)", "ruff", "sphinx-lint", "types-requests"]
+test = ["cython", "html5lib", "pytest (>=4.6)"]
 
 [[package]]
 name = "sphinx-autobuild"
@@ -3074,29 +3093,29 @@ protobuf = ">=3.8.0,<4"
 
 [[package]]
 name = "tensorstore"
-version = "0.1.32"
+version = "0.1.33"
 description = "Read and write large, multi-dimensional arrays"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "tensorstore-0.1.32-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:4cb9a1a8339ee03ed30102c111f46d459f16f4a4cb93afd98ddce7f383fa6424"},
-    {file = "tensorstore-0.1.32-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:60cc5b88e2d0fa87c7a27904463d918d742c6c87deced88b0240f489d16ba7cd"},
-    {file = "tensorstore-0.1.32-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:12ab0fd459ac3c0111aa89ef658a4ccebb6505c1eff22ed843f23a1540191eba"},
-    {file = "tensorstore-0.1.32-cp310-cp310-win_amd64.whl", hash = "sha256:755256ea7785e00ada3d6100030f2e5143e11912b9ab51f33d65df6ba21f1232"},
-    {file = "tensorstore-0.1.32-cp311-cp311-macosx_10_14_x86_64.whl", hash = "sha256:30f6d7cf32e8f1e4a4a5ae9d9f4f68c12d7811a9bdc427ed24a51f5e2f330ea1"},
-    {file = "tensorstore-0.1.32-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:381f5d9e734944b7f36f83a7d72c3557d90c0e868f404d512cb261dac46eb8ba"},
-    {file = "tensorstore-0.1.32-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e7ca255d3744fb192c98479549dfc6bfbd9fb1fd940e6e935e924b3174a92da1"},
-    {file = "tensorstore-0.1.32-cp311-cp311-win_amd64.whl", hash = "sha256:e3b39766c301fffcde3baf1bebe3b573e7c41736bb0b0afb7290cd1ee704390d"},
-    {file = "tensorstore-0.1.32-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:abbae54c91e883ea141a89fe39db4b8fb9f3c313410afc2edd78a5a6dcb346ed"},
-    {file = "tensorstore-0.1.32-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:3815568bf22634672cf9a54b8577355a9e51f8cc2a3dbb2e3c8e690ea3bd5ea6"},
-    {file = "tensorstore-0.1.32-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:62102c11276b2e2da87b6b5bb7f63fa1f49af2eb76afcfcd0d5514e0f62d7b5d"},
-    {file = "tensorstore-0.1.32-cp38-cp38-win_amd64.whl", hash = "sha256:481d150093548441aa4c33be8e25601c9fdb5ac704cb03c9df384e9fa86d1e5a"},
-    {file = "tensorstore-0.1.32-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:931ec3b116bbc4b45a3e51ceb9c8ab91f0090589dff33fd013b5758697bf6e0a"},
-    {file = "tensorstore-0.1.32-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:9af71995c0fcb16410e1018e134844246af9aedac3b03a52a5ac5be1bd841b74"},
-    {file = "tensorstore-0.1.32-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1ae42dfc84943531ddecc83a0c3f3b13864a84310299e5551e3ffa6795465bb4"},
-    {file = "tensorstore-0.1.32-cp39-cp39-win_amd64.whl", hash = "sha256:2d2ab87572311d27ca0292e15bc050ae5d8f8000d1bc6094019403fbfc561760"},
-    {file = "tensorstore-0.1.32.tar.gz", hash = "sha256:497470cc199aa1d115e90be1d0e88208acb84dccae7d1e5a967fad4cd9f144c8"},
+    {file = "tensorstore-0.1.33-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:af284933437d0c292b609b63190759090d50a0b4d802d8c309ce7647377b9810"},
+    {file = "tensorstore-0.1.33-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:abba0438892eda42a729184fa812b67f91980556af8f8ed1d819a654cc97e341"},
+    {file = "tensorstore-0.1.33-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b07680fd0de4ea7787567ae2ee2a9e829262286105f758b6213db5592269b178"},
+    {file = "tensorstore-0.1.33-cp310-cp310-win_amd64.whl", hash = "sha256:2629b39c2555f94e5e32776459e6c879ad3ceded5ed2b9963914f30b90ae3af7"},
+    {file = "tensorstore-0.1.33-cp311-cp311-macosx_10_14_x86_64.whl", hash = "sha256:c7645ec63234bbed51a5f310cfd90579d229de9d2ab089573ff5af48316145c0"},
+    {file = "tensorstore-0.1.33-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:eddb82fcb91844373cd414004cfbee878930cd9662ee784f0f5df8e08248b178"},
+    {file = "tensorstore-0.1.33-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2767fc729f2ea3734f3b1ef8814d57b69639f3b2648d8ab5361b985a158caf6a"},
+    {file = "tensorstore-0.1.33-cp311-cp311-win_amd64.whl", hash = "sha256:4b90ea9ed8ca733954a93497a3d166aa917565a4116f52bfc815d982ec210fdf"},
+    {file = "tensorstore-0.1.33-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:b54974fee556208b4a35aab12aba979714674e54f9e625c59f223e861355a1e2"},
+    {file = "tensorstore-0.1.33-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:c0086f36a0e00869fb88deb662b08786ccc4954ca1c6a02b2f532309acbe10e0"},
+    {file = "tensorstore-0.1.33-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7046b345c545fcd05c0dbe620bf4f2cd3c06d4194d16b482404ea5fb267e21d7"},
+    {file = "tensorstore-0.1.33-cp38-cp38-win_amd64.whl", hash = "sha256:c9b6744372ab31a4c99c405685fa9ea9c64357a3cca3fbdc7d71280c10d8c9bc"},
+    {file = "tensorstore-0.1.33-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:8ff7e2d1a5ee6e08e9780ab2e92c283a969e8dd06fd34eb1e893de4ad00e5f52"},
+    {file = "tensorstore-0.1.33-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:1ae9efafc9892435b34bea3e5cfced965f5889d36cfbd00769b7bf399d3602a7"},
+    {file = "tensorstore-0.1.33-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5247a5eccebd6d1780b7ba54bf1f7c0f408acc7683bcf84cd006010649540b67"},
+    {file = "tensorstore-0.1.33-cp39-cp39-win_amd64.whl", hash = "sha256:c3f7181712f61efa62149b37f34fcc51b2243fbc92b47d4b3353222f5b8620b7"},
+    {file = "tensorstore-0.1.33.tar.gz", hash = "sha256:471d449b9dcbfe5f08691ccf95f3b61188d8306540dd6112d9a689f8c3b6f6e8"},
 ]
 
 [package.dependencies]
@@ -3251,14 +3270,14 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "virtualenv"
-version = "20.19.0"
+version = "20.20.0"
 description = "Virtual Python Environment builder"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "virtualenv-20.19.0-py3-none-any.whl", hash = "sha256:54eb59e7352b573aa04d53f80fc9736ed0ad5143af445a1e539aada6eb947dd1"},
-    {file = "virtualenv-20.19.0.tar.gz", hash = "sha256:37a640ba82ed40b226599c522d411e4be5edb339a0c0de030c0dc7b646d61590"},
+    {file = "virtualenv-20.20.0-py3-none-any.whl", hash = "sha256:3c22fa5a7c7aa106ced59934d2c20a2ecb7f49b4130b8bf444178a16b880fa45"},
+    {file = "virtualenv-20.20.0.tar.gz", hash = "sha256:a8a4b8ca1e28f864b7514a253f98c1d62b64e31e77325ba279248c65fb4fcef4"},
 ]
 
 [package.dependencies]
@@ -3406,4 +3425,4 @@ tests-strict = ["codecov (==2.0.15)", "pytest (==4.6.0)", "pytest (==4.6.0)", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "aefa814eecf03a838d678df80c048bd57f0d5bd13298c9f3bb2691d75ca5abeb"
+content-hash = "22a64bdcac81ebb690ca3a1d2d5226a1b4efb2fee14d31d491c53a63198cd8bb"

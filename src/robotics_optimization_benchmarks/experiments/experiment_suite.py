@@ -12,7 +12,9 @@ from jaxtyping import Array
 from jaxtyping import Shaped
 
 from robotics_optimization_benchmarks.benchmarks import Benchmark
-from robotics_optimization_benchmarks.experiment_runner import run_experiment
+from robotics_optimization_benchmarks.experiments.experiment_runner import (
+    run_experiment,
+)
 from robotics_optimization_benchmarks.optimizers import Optimizer
 
 

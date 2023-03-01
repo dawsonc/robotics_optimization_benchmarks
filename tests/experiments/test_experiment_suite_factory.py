@@ -89,8 +89,6 @@ def test_experiment_suite_factory_user_story(tmpdir) -> None:
     assert gd_df.columns.tolist() == mala_df.columns.tolist()
 
 
-# Test that the experiment suite factory raises an error if the optimizers have
-# duplicate names.
 def test_experiment_suite_factory_duplicate_optimizer_names() -> None:
     """Test that we cannot create an experiment suite with duplicate optimizer names."""
     with pytest.raises(ValueError):

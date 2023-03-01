@@ -8,7 +8,9 @@ from beartype.typing import List
 from beartype.typing import Union
 
 from robotics_optimization_benchmarks.benchmarks.registry import make as make_benchmark
-from robotics_optimization_benchmarks.experiment_suite import ExperimentSuite
+from robotics_optimization_benchmarks.experiments.experiment_suite import (
+    ExperimentSuite,
+)
 from robotics_optimization_benchmarks.optimizers.registry import make as make_optimizer
 
 

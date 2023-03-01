@@ -76,9 +76,9 @@ def run_experiment(
             "Optimizer type": optimizer.name,
             "Seed": seed,
             "Steps": range(max_steps),
-            "Objective evaluations": states.cumulative_function_calls,
+            "Cumulative objective calls": states.cumulative_function_calls,
             "Objective": states.objective_value,
-            "Time per step": total_time / max_steps,
+            "Avg. time per step (s)": total_time / max_steps,
         }
     )
     # Extract the solution at the last step
