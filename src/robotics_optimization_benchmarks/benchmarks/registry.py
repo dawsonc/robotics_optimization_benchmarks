@@ -6,6 +6,7 @@ from beartype.typing import Type
 from robotics_optimization_benchmarks.benchmarks.ballistic import Ballistic
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
 from robotics_optimization_benchmarks.benchmarks.brax import Brax
+from robotics_optimization_benchmarks.benchmarks.double_well import DoubleWell
 from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 
 
@@ -62,3 +63,4 @@ def register(name: str, benchmark: Type[Benchmark]) -> None:
 register(Ballistic.name, Ballistic)
 register(Brax.name, Brax)
 register(Quadratic.name, Quadratic)
+register(DoubleWell.name, DoubleWell)
