@@ -86,8 +86,8 @@ class BGD(Optimizer):
         # Create the initial state of the optimizer.
         initial_state = OptimizerState(
             solution=initial_solution,
-            cumulative_objective_calls=0,
-            cumulative_gradient_calls=0,
+            objective_value=objective_fn(initial_solution),
+            cumulative_function_calls=1,
         )
 
         # The zero-order batched gradient estimator is the average of a bunch of
@@ -170,9 +170,8 @@ class BGD(Optimizer):
                 The solution to the optimization problem.
             """
             # Implement gradient descent with the batched zero-order estimate
-            current_objective = objective_fn(state.solution)
             gradient = zero_order_batched_grad_estimate(
-                state.solution, current_objective, key
+                state.solution, state.objective_value, key
             )
             next_solution = jtu.tree_map(
                 lambda x, grad: x - self._step_size * grad, state.solution, gradient
@@ -180,13 +179,12 @@ class BGD(Optimizer):
 
             return OptimizerState(
                 solution=next_solution,
-                # We didn't evaluate the gradient.
-                cumulative_gradient_calls=state.cumulative_gradient_calls,
-                # We called the objective once to get a baseline and then
-                # self._n_samples additional times
-                cumulative_objective_calls=state.cumulative_objective_calls
-                + 1
-                + self._n_samples,
+                objective_value=objective_fn(next_solution),
+                # We called the objective self._n_samples times then once more to get
+                # the baseline for the next step.
+                cumulative_function_calls=(
+                    state.cumulative_function_calls + 1 + self._n_samples
+                ),
             )
 
         return initial_state, step

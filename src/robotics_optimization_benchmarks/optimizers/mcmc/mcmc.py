@@ -181,10 +181,10 @@ class MCMC(Optimizer):
         # Initialize the state.
         initial_state = MCMCOptimizerState(
             solution=initial_solution,
+            objective_value=-logdensity,
             logdensity=logdensity,
             logdensity_grad=logdensity_grad,
-            cumulative_objective_calls=1,
-            cumulative_gradient_calls=1,
+            cumulative_function_calls=1,
         )
 
         # Define the step function (baking in the objective and gradient functions).
@@ -239,10 +239,10 @@ class MCMC(Optimizer):
             )
             proposed_state = MCMCOptimizerState(
                 solution=proposed_solution,
+                objective_value=-proposed_logdensity,
                 logdensity=proposed_logdensity,
                 logdensity_grad=proposed_logdensity_grad,
-                cumulative_objective_calls=state.cumulative_objective_calls + 1,
-                cumulative_gradient_calls=state.cumulative_gradient_calls + 1,
+                cumulative_function_calls=state.cumulative_function_calls + 1,
             )
 
             # Update the old state to increase the number of objective and gradient
@@ -250,10 +250,10 @@ class MCMC(Optimizer):
             # to evaluate the objective and gradient during this step).
             old_state = MCMCOptimizerState(
                 solution=state.solution,
+                objective_value=state.objective_value,
                 logdensity=state.logdensity,
                 logdensity_grad=state.logdensity_grad,
-                cumulative_objective_calls=state.cumulative_objective_calls + 1,
-                cumulative_gradient_calls=state.cumulative_gradient_calls + 1,
+                cumulative_function_calls=state.cumulative_function_calls + 1,
             )
 
             # Compute the acceptance probability per the Metropolis-Hastings algorithm

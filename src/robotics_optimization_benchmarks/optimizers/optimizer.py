@@ -24,14 +24,14 @@ class OptimizerState:
 
     Attributes:
         solution: the current solution.
-        cumulative_objective_calls: the cumulative number of objective function calls.
-        cumulative_gradient_calls: the cumulative number of evaluations of the gradient
-            of the objective function.
+        objective_value: the value of the objective function at the current solution.
+        cumulative_function_calls: the cumulative number of objective function or
+            gradient calls.
     """
 
     solution: DecisionVariable
-    cumulative_objective_calls: int
-    cumulative_gradient_calls: int
+    objective_value: Float[Array, ""]
+    cumulative_function_calls: int
 
 
 class Optimizer(ABC):

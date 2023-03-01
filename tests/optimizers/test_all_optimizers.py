@@ -52,7 +52,7 @@ def test_optimizer_to_dict(optimizer_name, params):
     # The parameters passed to from_dict should be a subset of those returned by
     # to_dict, since there may be default parameters not specified in from_dict
     assert all(key in optimizer_params for key in params)
-    assert all(optimizer_params[key] == value for key, value in params)
+    assert all(optimizer_params[key] == params[key] for key in params)
 
 
 @pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
