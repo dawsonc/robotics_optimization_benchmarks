@@ -27,6 +27,7 @@ def create_experiment_suite(
     """Create an experiment suite.
 
     Example:
+
         >>> experiment_suite = create_experiment_suite(
         ...     name="test_suite",
         ...     description="Test suite for integration tests.",
@@ -91,38 +92,6 @@ def create_experiment_suite(
     return experiment_suite
 
 
-@beartype
-def create_experiment_suite_from_dict(
-    experiment_suite_spec: Dict[str, Any]
-) -> ExperimentSuite:
-    """Create an experiment suite from a dictionary.
-
-    Args:
-        experiment_suite_spec: a dictionary containing the following keys:
-            - name: the name of the experiment suite.
-            - description: a brief description of the experiment suite.
-            - seeds: a list of random seeds to use for the experiment suite.
-            - benchmark_name: the name of the benchmark to use for the experiment suite.
-            - benchmark_hparams: a dict of hyperparameters for the benchmark.
-            - max_steps: the maximum number of optimization steps to run for each
-                optimizer.
-            - optimizer_specs: a list of dictionaries, each containing the name, type,
-                and hyperparameters dictionary for each optimizer.
-
-    Returns:
-        An experiment suite.
-    """
-    return create_experiment_suite(
-        name=experiment_suite_spec["name"],
-        description=experiment_suite_spec["description"],
-        seeds=experiment_suite_spec["seeds"],
-        benchmark_name=experiment_suite_spec["benchmark_name"],
-        benchmark_hparams=experiment_suite_spec["benchmark_hparams"],
-        max_steps=experiment_suite_spec["max_steps"],
-        optimizer_specs=experiment_suite_spec["optimizer_specs"],
-    )
-
-
 def create_experiment_suite_from_file(json_file_path: str) -> ExperimentSuite:
     """Create an experiment suite from a JSON file.
 
@@ -136,4 +105,4 @@ def create_experiment_suite_from_file(json_file_path: str) -> ExperimentSuite:
     with open(json_file_path, encoding="utf-8") as params_f:
         experiment_suite_spec = json.load(params_f)
 
-    return create_experiment_suite_from_dict(experiment_suite_spec)
+    return create_experiment_suite(**experiment_suite_spec)
