@@ -39,6 +39,7 @@ def plot_optimizer_progress(
         A figure containing the plots.
     """
     # Create a figure to plot the results on
+    set_plot_style()
     fig, axes = plt.subplots(1, 2, figsize=size)
 
     # Load the params of the experiment suite (mainly so we can get the name of the

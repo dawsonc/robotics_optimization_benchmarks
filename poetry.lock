@@ -3425,4 +3425,4 @@ tests-strict = ["codecov (==2.0.15)", "pytest (==4.6.0)", "pytest (==4.6.0)", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "22a64bdcac81ebb690ca3a1d2d5226a1b4efb2fee14d31d491c53a63198cd8bb"
+content-hash = "f6304545387bcdb471d135adc829035486d428df9a735f672d1718d7572b32c7"

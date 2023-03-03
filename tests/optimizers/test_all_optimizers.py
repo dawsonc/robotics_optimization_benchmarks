@@ -20,6 +20,20 @@ optimizers_to_test = [
     ("MCMC", {"use_gradients": True, "use_metropolis": False}),  # ULA
     ("MCMC", {"use_gradients": False, "use_metropolis": True}),  # RMH
     ("VPG", {}),
+    ("Optax", {"optimizer_name": "adam", "params": {"learning_rate": 0.01}}),
+    ("Optax", {"optimizer_name": "adagrad", "params": {"learning_rate": 0.01}}),
+    ("Optax", {"optimizer_name": "sgd", "params": {"learning_rate": 0.01}}),
+    (
+        "Optax",
+        {"optimizer_name": "sgd", "params": {"learning_rate": 0.01, "momentum": 0.9}},
+    ),
+    (
+        "Optax",
+        {
+            "optimizer_name": "sgd",
+            "params": {"learning_rate": 0.01, "momentum": 0.9, "nesterov": True},
+        },
+    ),
 ]
 
 
