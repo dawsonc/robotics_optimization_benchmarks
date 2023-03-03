@@ -3,7 +3,9 @@ import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from beartype import beartype
+from beartype.typing import Any
 from beartype.typing import BinaryIO
+from beartype.typing import Dict
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -38,6 +40,11 @@ class Ballistic(Benchmark):
             dimension: The dimension of the problem.
         """
         self.dimension = dimension
+
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize the benchmark."""
+        return {"dimension": self.dimension}
 
     @jaxtyped
     @beartype

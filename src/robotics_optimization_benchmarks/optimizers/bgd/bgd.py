@@ -4,7 +4,9 @@ import jax.numpy as jnp
 import jax.random as jrandom
 import jax.tree_util as jtu
 from beartype import beartype
+from beartype.typing import Any
 from beartype.typing import Callable
+from beartype.typing import Dict
 from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
@@ -51,6 +53,15 @@ class BGD(Optimizer):
         self._smoothing_std = smoothing_std
         self._n_samples = n_samples
 
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+        return {
+            "step_size": self._step_size,
+            "smoothing_std": self._smoothing_std,
+            "n_samples": self._n_samples,
+        }
+
     @jaxtyped
     @beartype
     def make_step(
@@ -68,15 +79,16 @@ class BGD(Optimizer):
 
         Returns:
             initial_state: The initial state of the optimizer.
+
             step_fn: A function that takes the current state of the optimizer and a PRNG
-                key and returns the next state of the optimizer, executing one step of
-                the optimization algorithm.
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
         """
         # Create the initial state of the optimizer.
         initial_state = OptimizerState(
             solution=initial_solution,
-            cumulative_objective_calls=0,
-            cumulative_gradient_calls=0,
+            objective_value=objective_fn(initial_solution),
+            cumulative_function_calls=1,
         )
 
         # The zero-order batched gradient estimator is the average of a bunch of
@@ -159,9 +171,8 @@ class BGD(Optimizer):
                 The solution to the optimization problem.
             """
             # Implement gradient descent with the batched zero-order estimate
-            current_objective = objective_fn(state.solution)
             gradient = zero_order_batched_grad_estimate(
-                state.solution, current_objective, key
+                state.solution, state.objective_value, key
             )
             next_solution = jtu.tree_map(
                 lambda x, grad: x - self._step_size * grad, state.solution, gradient
@@ -169,13 +180,12 @@ class BGD(Optimizer):
 
             return OptimizerState(
                 solution=next_solution,
-                # We didn't evaluate the gradient.
-                cumulative_gradient_calls=state.cumulative_gradient_calls,
-                # We called the objective once to get a baseline and then
-                # self._n_samples additional times
-                cumulative_objective_calls=state.cumulative_objective_calls
-                + 1
-                + self._n_samples,
+                objective_value=objective_fn(next_solution),
+                # We called the objective self._n_samples times then once more to get
+                # the baseline for the next step.
+                cumulative_function_calls=(
+                    state.cumulative_function_calls + 1 + self._n_samples
+                ),
             )
 
         return initial_state, step

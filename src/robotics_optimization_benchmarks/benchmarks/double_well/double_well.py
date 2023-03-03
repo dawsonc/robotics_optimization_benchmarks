@@ -1,6 +1,5 @@
-"""Define a simple quadratic optimization benchmark."""
+"""Define a double-well optimization benchmark."""
 import jax
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from beartype import beartype
 from beartype.typing import Any
@@ -15,21 +14,22 @@ from robotics_optimization_benchmarks.types import DecisionVariable
 from robotics_optimization_benchmarks.types import PRNGKeyArray
 
 
-class Quadratic(Benchmark):
-    """Define a simple quadratic optimization benchmark.
+class DoubleWell(Benchmark):
+    """Define a simple double well optimization benchmark.
 
     Mimizes the problem
 
-    U(x) = x^T x
+    U(x) = x^4 - x^2 - 0.5 * x^3
 
     with x in R^n. Not intended to be a challenging problem, but rather a simple test
-    case for optimizers.
+    case for optimizers (but it does have a local minimum around x=-0.5, the global
+    optimum is at x=1).
 
     Attributes:
         dimension: The dimension of the problem.
     """
 
-    _name: str = "quadratic"
+    _name: str = "double_well"
 
     dimension: int
 
@@ -51,7 +51,7 @@ class Quadratic(Benchmark):
     def sample_initial_guess(self, key: PRNGKeyArray) -> DecisionVariable:
         """Sample a random initial solution to the problem.
 
-        x_0 ~ N(1, I_{n x n})
+        x_0 ~ N(-1, I_{n x n})
 
         Args:
             key: a JAX PRNG key used to sample the solution.
@@ -59,7 +59,7 @@ class Quadratic(Benchmark):
         Returns:
             A random initial solution to the problem in R^{self.dimension}.
         """
-        return jax.random.normal(key, shape=(self.dimension,)) + 1.0
+        return jax.random.normal(key, shape=(self.dimension,)) - 1.0
 
     @jaxtyped
     @beartype
@@ -72,7 +72,7 @@ class Quadratic(Benchmark):
         Returns:
             The objective function evaluated at the given solution.
         """
-        return jnp.dot(solution, solution)
+        return (solution**4 - solution**2 - 0.5 * solution**3).sum()
 
     def render_solution(
         self, solution: DecisionVariable, save_to: str | BinaryIO
@@ -87,7 +87,22 @@ class Quadratic(Benchmark):
         fig, axis = plt.subplots(1, 1, figsize=(8, 8))
 
         # Plot the solution relative to the optimal cost
-        axis.scatter(0, 0, color="k", marker="_", s=200, label="Optimal")
+        axis.scatter(
+            0,
+            -0.5194 * self.dimension,
+            color="k",
+            marker="_",
+            s=200,
+            label="Global optimum",
+        )
+        axis.scatter(
+            0,
+            -0.1279 * self.dimension,
+            color="b",
+            marker="_",
+            s=200,
+            label="Local optimum",
+        )
         axis.scatter(
             0,
             self.evaluate_solution(solution),

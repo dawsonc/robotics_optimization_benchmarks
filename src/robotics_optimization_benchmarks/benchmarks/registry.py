@@ -6,6 +6,7 @@ from beartype.typing import Type
 from robotics_optimization_benchmarks.benchmarks.ballistic import Ballistic
 from robotics_optimization_benchmarks.benchmarks.benchmark import Benchmark
 from robotics_optimization_benchmarks.benchmarks.brax import Brax
+from robotics_optimization_benchmarks.benchmarks.double_well import DoubleWell
 from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
 
 
@@ -22,10 +23,11 @@ def make(name: str) -> Type[Benchmark]:
 
     Benchmarks can be constructed by chaining with the initializer or `from_dict`
     class methods, e.g.:
-    ```
-    my_benchmark = benchmarks.make("benchmark")(arg1, arg2)
-    my_benchmark = benchmarks.make("benchmark").from_dict({"arg1": 1, "arg2": 2})
-    ```
+
+    .. code-block:: python
+
+        my_benchmark = benchmarks.make("benchmark")(arg1, arg2)
+        my_benchmark = benchmarks.make("benchmark").from_dict({"arg1": 1, "arg2": 2})
 
     Args:
         name: the name of the benchmark to access.
@@ -34,7 +36,7 @@ def make(name: str) -> Type[Benchmark]:
         KeyError: if the benchmark name is not registered.  # noqa: DAR402
 
     Returns:
-        The benchmark class stored in the registry.
+        The `Benchmark` class stored in the registry under the given name.
     """
     return _benchmark_registry[name]
 
@@ -62,3 +64,4 @@ def register(name: str, benchmark: Type[Benchmark]) -> None:
 register(Ballistic.name, Ballistic)
 register(Brax.name, Brax)
 register(Quadratic.name, Quadratic)
+register(DoubleWell.name, DoubleWell)

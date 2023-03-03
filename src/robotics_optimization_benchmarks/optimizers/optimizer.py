@@ -24,14 +24,14 @@ class OptimizerState:
 
     Attributes:
         solution: the current solution.
-        cumulative_objective_calls: the cumulative number of objective function calls.
-        cumulative_gradient_calls: the cumulative number of evaluations of the gradient
-            of the objective function.
+        objective_value: the value of the objective function at the current solution.
+        cumulative_function_calls: the cumulative number of objective function or
+            gradient calls.
     """
 
     solution: DecisionVariable
-    cumulative_objective_calls: int
-    cumulative_gradient_calls: int
+    objective_value: Float[Array, ""]
+    cumulative_function_calls: int
 
 
 class Optimizer(ABC):
@@ -74,6 +74,11 @@ class Optimizer(ABC):
         return cls(**params)
 
     @abstractmethod
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+
+    @abstractmethod
     @jaxtyped
     @beartype
     def make_step(
@@ -91,7 +96,8 @@ class Optimizer(ABC):
 
         Returns:
             initial_state: The initial state of the optimizer.
+
             step_fn: A function that takes the current state of the optimizer and a PRNG
-                key and returns the next state of the optimizer, executing one step of
-                the optimization algorithm.
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
         """

@@ -1,7 +1,6 @@
 """Implement an interface to `Optax <https://optax.readthedocs.io/en/latest/api.html>`_."""
 import chex
 import jax
-import jax.tree_util as jtu
 import optax
 from beartype import beartype
 from beartype.typing import Any
@@ -25,8 +24,8 @@ class OptaxOptimizerState(OptimizerState):
 
     Attributes:
         solution: the current solution.
-        cumulative_objective_calls: the cumulative number of objective function calls.
-        cumulative_gradient_calls: the cumulative number of evaluations of the gradient
+        objective_value: the value of the objective function at the current solution.
+        cumulative_function_calls: the cumulative number of objective function calls.
         optax_state: the state of the wrapped Optax optimizer.
     """
 
@@ -37,9 +36,9 @@ class Optax(Optimizer):
     """Wrapper around arbitrary Optax optimizers."""
 
     _name: str = "Optax"
-    _algorithm_name: str
-    _algorithm: optax.GradientTransformation
-    _algorithm_params: Dict[str, Any]
+    _optimizer_name: str
+    _optimizer: optax.GradientTransformation
+    _optimizer_params: Dict[str, Any]
 
     @beartype
     def __init__(self, optimizer_name: str, params: dict[str, Any]):
@@ -49,19 +48,30 @@ class Optax(Optimizer):
             optimizer_name: the name of the Optax optimizer to use.
             params: a dictionary of keyword arguments to pass to the initializer of the
                 Optax optimizer.
+
+        Raises:
+            ValueError: if the specified Optax optimizer is not found.
         """
         super().__init__()
         if not hasattr(optax, optimizer_name):
             raise ValueError(f"Optax optimizer {optimizer_name} not found.")
-        self._algorithm_name = optimizer_name
-        self._algorithm = getattr(optax, optimizer_name)(**params)
-        self._algorithm_params = params
+        self._optimizer_name = optimizer_name
+        self._optimizer = getattr(optax, optimizer_name)(**params)
+        self._optimizer_params = params
 
     @property
     @beartype
     def description(self) -> str:
         """Get a string description of this optimizer."""
-        return f"{self.name} ({self._algorithm_name})"
+        return f"{self.name} ({self._optimizer_name})"
+
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+        return {
+            "optimizer_name": self._optimizer_name,
+            "params": self._optimizer_params,
+        }
 
     @jaxtyped
     @beartype
@@ -88,18 +98,18 @@ class Optax(Optimizer):
         # Create the initial state of the optimizer.
         initial_state = OptaxOptimizerState(
             solution=initial_solution,
-            cumulative_objective_calls=0,
-            cumulative_gradient_calls=0,
-            optax_state=self._algorithm.init(initial_solution),
+            objective_value=objective_fn(initial_solution),
+            cumulative_function_calls=0,
+            optax_state=self._optimizer.init(initial_solution),
         )
 
         # Auto-diff the objective to pass into our step function
-        grad_fn = jax.grad(objective_fn)
+        value_and_grad_fn = jax.value_and_grad(objective_fn)
 
         # Define the step function (baking in the objective and gradient functions).
         @jaxtyped
         @beartype
-        def step(state: OptimizerState, _: PRNGKeyArray) -> OptimizerState:
+        def step(state: OptaxOptimizerState, _: PRNGKeyArray) -> OptaxOptimizerState:
             """Take one step towards minimizing the objective.
 
             Args:
@@ -109,17 +119,18 @@ class Optax(Optimizer):
             Returns:
                 The solution to the optimization problem.
             """
-            gradient = grad_fn(state.solution)
-            next_solution = jtu.tree_map(
-                lambda x, grad: x - self._step_size * grad, state.solution, gradient
+            value, gradient = value_and_grad_fn(state.solution)
+            updates, next_optax_state = self._optimizer.update(
+                gradient, state.optax_state, state.solution
             )
+            next_solution = optax.apply_updates(state.solution, updates)
 
-            return OptimizerState(
+            return OptaxOptimizerState(
                 solution=next_solution,
+                objective_value=value,
                 # We evaluated the gradient once to step to the next solution.
-                cumulative_gradient_calls=state.cumulative_gradient_calls + 1,
-                # We didn't need to call the objective function itself.
-                cumulative_objective_calls=state.cumulative_objective_calls,
+                cumulative_function_calls=state.cumulative_function_calls + 1,
+                optax_state=next_optax_state,
             )
 
         return initial_state, step

@@ -8,7 +8,9 @@ import jax.numpy as jnp
 import jax.random as jrandom
 import jax.tree_util as jtu
 from beartype import beartype
+from beartype.typing import Any
 from beartype.typing import Callable
+from beartype.typing import Dict
 from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
@@ -91,6 +93,15 @@ class MCMC(Optimizer):
         self._uses_gradients = use_gradients
         self._metropolis_adjusted = use_metropolis
 
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+        return {
+            "use_gradients": self._uses_gradients,
+            "use_metropolis": self._metropolis_adjusted,
+            "step_size": self._step_size,
+        }
+
     @jaxtyped
     @beartype
     def transition_log_probability(
@@ -153,9 +164,10 @@ class MCMC(Optimizer):
 
         Returns:
             initial_state: The initial state of the optimizer.
+
             step_fn: A function that takes the current state of the optimizer and a PRNG
-                key and returns the next state of the optimizer, executing one step of
-                the optimization algorithm.
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
         """
         # Convert the objective function to a log density function by negating it
         # This means that low costs -> high densitites -> more likely samples
@@ -170,10 +182,10 @@ class MCMC(Optimizer):
         # Initialize the state.
         initial_state = MCMCOptimizerState(
             solution=initial_solution,
+            objective_value=-logdensity,
             logdensity=logdensity,
             logdensity_grad=logdensity_grad,
-            cumulative_objective_calls=1,
-            cumulative_gradient_calls=1,
+            cumulative_function_calls=1,
         )
 
         # Define the step function (baking in the objective and gradient functions).
@@ -228,10 +240,10 @@ class MCMC(Optimizer):
             )
             proposed_state = MCMCOptimizerState(
                 solution=proposed_solution,
+                objective_value=-proposed_logdensity,
                 logdensity=proposed_logdensity,
                 logdensity_grad=proposed_logdensity_grad,
-                cumulative_objective_calls=state.cumulative_objective_calls + 1,
-                cumulative_gradient_calls=state.cumulative_gradient_calls + 1,
+                cumulative_function_calls=state.cumulative_function_calls + 1,
             )
 
             # Update the old state to increase the number of objective and gradient
@@ -239,10 +251,10 @@ class MCMC(Optimizer):
             # to evaluate the objective and gradient during this step).
             old_state = MCMCOptimizerState(
                 solution=state.solution,
+                objective_value=state.objective_value,
                 logdensity=state.logdensity,
                 logdensity_grad=state.logdensity_grad,
-                cumulative_objective_calls=state.cumulative_objective_calls + 1,
-                cumulative_gradient_calls=state.cumulative_gradient_calls + 1,
+                cumulative_function_calls=state.cumulative_function_calls + 1,
             )
 
             # Compute the acceptance probability per the Metropolis-Hastings algorithm

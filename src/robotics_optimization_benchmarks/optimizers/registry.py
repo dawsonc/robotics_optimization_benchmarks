@@ -24,10 +24,11 @@ def make(name: str) -> Type[Optimizer]:
 
     Optimizers can be constructed by chaining with the initializer or `from_dict`
     class methods, e.g.:
-    ```
-    my_optimizer = optimizers.make("optimizer")(arg1, arg2)
-    my_optimizer = optimizers.make("optimizer").from_dict({"arg1": 1, "arg2": 2})
-    ```
+
+    .. code-block:: python
+
+        my_optimizer = optimizers.make("optimizer")(arg1, arg2)
+        my_optimizer = optimizers.make("optimizer").from_dict({"arg1": 1, "arg2": 2})
 
     Args:
         name: the name of the optimizer to access.
@@ -36,7 +37,7 @@ def make(name: str) -> Type[Optimizer]:
         KeyError: if the optimizer name is not registered.  # noqa: DAR402
 
     Returns:
-        The optimizer class stored in the registry.
+        The `Optimizer` class stored in the registry under the given name.
     """
     return _optimizer_registry[name]
 
