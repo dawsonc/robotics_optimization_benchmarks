@@ -34,6 +34,13 @@ def test_ballistic_from_dict(dimension: int):
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
+def test_ballistic_to_dict(dimension: int):
+    """Test ballistic benchmark to dict."""
+    benchmark = Ballistic(dimension=dimension)
+    assert benchmark.to_dict() == {"dimension": dimension}
+
+
+@pytest.mark.parametrize("dimension", dimensions_to_test)
 def test_ballistic_sample_initial_guess(dimension):
     """Test sampling an initial guess."""
     benchmark = Ballistic(dimension=dimension)

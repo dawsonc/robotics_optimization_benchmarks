@@ -6,7 +6,9 @@ import equinox as eqx
 import jax
 import jax.random as jrandom
 from beartype import beartype
+from beartype.typing import Any
 from beartype.typing import BinaryIO
+from beartype.typing import Dict
 from beartype.typing import List
 from jaxtyping import Array
 from jaxtyping import Float
@@ -98,6 +100,8 @@ class Brax(Benchmark):
     _name: str = "brax"
     _task: str
 
+    render_extension = "gif"
+
     # These are set based on the task
     _n_actions: int
     _n_observations: int
@@ -132,6 +136,16 @@ class Brax(Benchmark):
         self._env = brax.envs.create(task)
         self._n_actions = self._env.action_size
         self._n_observations = self._env.observation_size
+
+    @beartype
+    def to_dict(self) -> Dict[str, Any]:
+        """Get a dictionary containing the parameters to initialize the benchmark."""
+        return {
+            "task": self._task,
+            "policy_network_width": self.policy_network_width,
+            "policy_network_depth": self.policy_network_depth,
+            "horizon": self.horizon,
+        }
 
     @property
     def task(self) -> str:

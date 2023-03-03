@@ -1,58 +1,58 @@
-"""Test the quadratic benchmark."""
+"""Test the double well benchmark."""
 import io
 
 import jax.random as jrandom
 import pytest
 
 from robotics_optimization_benchmarks.benchmarks import make
-from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
+from robotics_optimization_benchmarks.benchmarks.double_well import DoubleWell
 
 
 dimensions_to_test = [1, 10, 100]
 
 
-def test_make_quadratic():
-    """Test making a quadratic benchmark from the registry."""
-    benchmark = make("quadratic")
-    assert benchmark == Quadratic
+def test_make_double_well():
+    """Test making a double well benchmark from the registry."""
+    benchmark = make("double_well")
+    assert benchmark == DoubleWell
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
-def test_quadratic_init(dimension: int):
-    """Test quadratic benchmark initialization."""
-    benchmark = Quadratic(dimension=dimension)
+def test_double_well_init(dimension: int):
+    """Test double well benchmark initialization."""
+    benchmark = DoubleWell(dimension=dimension)
     assert benchmark.dimension == dimension
-    assert benchmark.name == "quadratic"
+    assert benchmark.name == "double_well"
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
-def test_quadratic_to_dict(dimension: int):
-    """Test quadratic benchmark to dict."""
-    benchmark = Quadratic(dimension=dimension)
+def test_double_well_to_dict(dimension: int):
+    """Test double well benchmark to dict."""
+    benchmark = DoubleWell(dimension=dimension)
     assert benchmark.to_dict() == {"dimension": dimension}
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
-def test_quadratic_from_dict(dimension: int):
-    """Test creating a quadratic benchmark from a dictionary."""
-    benchmark = Quadratic.from_dict({"dimension": dimension})
+def test_double_well_from_dict(dimension: int):
+    """Test creating a double_well benchmark from a dictionary."""
+    benchmark = DoubleWell.from_dict({"dimension": dimension})
     assert benchmark.dimension == dimension
-    assert benchmark.name == "quadratic"
+    assert benchmark.name == "double_well"
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
-def test_quadratic_sample_initial_guess(dimension):
+def test_double_well_sample_initial_guess(dimension):
     """Test sampling an initial guess."""
-    benchmark = Quadratic(dimension=dimension)
+    benchmark = DoubleWell(dimension=dimension)
     key = jrandom.PRNGKey(0)
     initial_guess = benchmark.sample_initial_guess(key)
     assert initial_guess.shape == (dimension,)
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
-def test_quadratic_evaluate_solution(dimension):
+def test_double_well_evaluate_solution(dimension):
     """Test evaluating the benchmark."""
-    benchmark = Quadratic(dimension=dimension)
+    benchmark = DoubleWell(dimension=dimension)
     solution = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     value = benchmark.evaluate_solution(solution)
 
@@ -61,8 +61,8 @@ def test_quadratic_evaluate_solution(dimension):
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
-def test_quadratic_render_solution(dimension):
+def test_double_well_render_solution(dimension):
     """Test rendering the benchmark."""
-    benchmark = Quadratic(dimension=dimension)
+    benchmark = DoubleWell(dimension=dimension)
     solution = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     benchmark.render_solution(solution, io.BytesIO())

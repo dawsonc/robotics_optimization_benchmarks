@@ -69,6 +69,15 @@ class VPG(Optimizer):
         self._perturbation_stddev = perturbation_stddev
         self._baseline_update_rate = baseline_update_rate
 
+    @beartype
+    def to_dict(self) -> dict:
+        """Get a dictionary containing the parameters to initialize this optimizer."""
+        return {
+            "step_size": self._step_size,
+            "perturbation_stddev": self._perturbation_stddev,
+            "baseline_update_rate": self._baseline_update_rate,
+        }
+
     @jaxtyped
     @beartype
     def make_step(
@@ -87,16 +96,17 @@ class VPG(Optimizer):
 
         Returns:
             initial_state: The initial state of the optimizer.
+
             step_fn: A function that takes the current state of the optimizer and a PRNG
-                key and returns the next state of the optimizer, executing one step of
-                the optimization algorithm.
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
         """
         # Create the initial state of the optimizer.
         initial_state = VPGOptimizerState(
             solution=initial_solution,
+            objective_value=objective_fn(initial_solution),
             baseline=jnp.array(0.0),  # Initialize baseline moving average to zero
-            cumulative_objective_calls=0,
-            cumulative_gradient_calls=0,
+            cumulative_function_calls=1,
         )
 
         # Define the step function (baking in the objective and gradient functions).
@@ -139,10 +149,11 @@ class VPG(Optimizer):
 
             return VPGOptimizerState(
                 solution=next_solution,
-                # We did not evaluate the gradient.
-                cumulative_gradient_calls=state.cumulative_gradient_calls,
-                # We called the objective function once.
-                cumulative_objective_calls=state.cumulative_objective_calls + 1,
+                objective_value=objective_fn(next_solution),
+                # We called the objective function once (not counting the one extra time
+                # we called it to log the objective_value in the VPGOptimizerState,
+                # which we don't use for optimization).
+                cumulative_function_calls=state.cumulative_function_calls + 1,
                 # Update the moving average baseline
                 baseline=(
                     (1 - self._baseline_update_rate) * state.baseline
