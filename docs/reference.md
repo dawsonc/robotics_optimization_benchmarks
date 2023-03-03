@@ -8,6 +8,7 @@ maxdepth: 1
 
 benchmarks
 optimizers
+experiments
 ```
 
 ## `robotics_optimization_benchmarks`

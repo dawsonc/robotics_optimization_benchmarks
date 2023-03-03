@@ -53,9 +53,10 @@ class GD(Optimizer):
 
         Returns:
             initial_state: The initial state of the optimizer.
+
             step_fn: A function that takes the current state of the optimizer and a PRNG
-                key and returns the next state of the optimizer, executing one step of
-                the optimization algorithm.
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
         """
         # Create the initial state of the optimizer.
         initial_state = OptimizerState(
