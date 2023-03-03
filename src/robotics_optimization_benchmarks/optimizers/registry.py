@@ -6,6 +6,7 @@ from beartype.typing import Type
 from robotics_optimization_benchmarks.optimizers.bgd import BGD
 from robotics_optimization_benchmarks.optimizers.gd import GD
 from robotics_optimization_benchmarks.optimizers.mcmc import MCMC
+from robotics_optimization_benchmarks.optimizers.optax import Optax
 from robotics_optimization_benchmarks.optimizers.optimizer import Optimizer
 from robotics_optimization_benchmarks.optimizers.vpg import VPG
 
@@ -64,3 +65,4 @@ register(BGD.name, BGD)
 register(GD.name, GD)
 register(MCMC.name, MCMC)
 register(VPG.name, VPG)
+register(Optax.name, Optax)
