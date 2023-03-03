@@ -33,7 +33,16 @@ class OptaxOptimizerState(OptimizerState):
 
 
 class Optax(Optimizer):
-    """Wrapper around arbitrary Optax optimizers."""
+    """Wrapper around arbitrary Optax optimizers.
+
+    Args:
+        optimizer_name: the name of the Optax optimizer to use.
+        params: a dictionary of keyword arguments to pass to the initializer of the
+            Optax optimizer.
+
+    Raises:
+        ValueError: if the specified Optax optimizer is not found.
+    """
 
     _name: str = "Optax"
     _optimizer_name: str
@@ -42,16 +51,7 @@ class Optax(Optimizer):
 
     @beartype
     def __init__(self, optimizer_name: str, params: dict[str, Any]):
-        """Initialize the optimizer.
-
-        Args:
-            optimizer_name: the name of the Optax optimizer to use.
-            params: a dictionary of keyword arguments to pass to the initializer of the
-                Optax optimizer.
-
-        Raises:
-            ValueError: if the specified Optax optimizer is not found.
-        """
+        """Initialize the optimizer."""
         super().__init__()
         if not hasattr(optax, optimizer_name):
             raise ValueError(f"Optax optimizer {optimizer_name} not found.")
@@ -91,9 +91,10 @@ class Optax(Optimizer):
 
         Returns:
             initial_state: The initial state of the optimizer.
+
             step_fn: A function that takes the current state of the optimizer and a PRNG
-                key and returns the next state of the optimizer, executing one step of
-                the optimization algorithm.
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
         """
         # Create the initial state of the optimizer.
         initial_state = OptaxOptimizerState(
