@@ -86,7 +86,31 @@ class DoubleWell(Benchmark):
         # Create the figure to plot (we'll return this to the caller)
         fig, axis = plt.subplots(1, 1, figsize=(8, 8))
 
-        # Nothing interesting to plot here...
+        # Plot the solution relative to the optimal cost
+        axis.scatter(
+            0,
+            -0.5194 * self.dimension,
+            color="k",
+            marker="_",
+            s=200,
+            label="Global optimum",
+        )
+        axis.scatter(
+            0,
+            -0.1279 * self.dimension,
+            color="b",
+            marker="_",
+            s=200,
+            label="Local optimum",
+        )
+        axis.scatter(
+            0,
+            self.evaluate_solution(solution),
+            color="r",
+            marker="x",
+            s=200,
+            label="Solution",
+        )
 
         # Save the figure and clean up
         fig.savefig(save_to, format="png")

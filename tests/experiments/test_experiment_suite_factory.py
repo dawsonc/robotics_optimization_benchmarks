@@ -66,10 +66,12 @@ def test_experiment_suite_factory_user_story(tmpdir) -> None:
     # There should be files for:
     # - a JSON that allows us to re-create the experiment suite
     # - a CSV file for each optimizer that contains the progress of each optimizer
-    # - a JSON file for each optimizer that contains the final solution of each optimizer
+    # - a binary eqx file for each optimizer and each seed that contains the solution
+    #   found by each optimizer
     assert pathlib.Path(params_path).exists()
-    for trace_path, solution_path in zip(trace_paths, solution_paths, strict=True):
+    for trace_path in trace_paths:
         assert pathlib.Path(trace_path).exists()
+    for solution_path in solution_paths:
         assert pathlib.Path(solution_path).exists()
 
     # Check the contents of the parameter file

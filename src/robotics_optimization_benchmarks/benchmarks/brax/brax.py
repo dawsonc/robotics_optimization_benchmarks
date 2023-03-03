@@ -100,6 +100,8 @@ class Brax(Benchmark):
     _name: str = "brax"
     _task: str
 
+    render_extension = "gif"
+
     # These are set based on the task
     _n_actions: int
     _n_observations: int

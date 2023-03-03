@@ -2,14 +2,13 @@
 import json
 import os
 
+import equinox as eqx
 import pandas as pd
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
 from beartype.typing import List
 from beartype.typing import Tuple
-from jaxtyping import Array
-from jaxtyping import Shaped
 
 from robotics_optimization_benchmarks.benchmarks import Benchmark
 from robotics_optimization_benchmarks.experiments.experiment_runner import (
@@ -127,13 +126,18 @@ class ExperimentSuite:
         for optimizer_name, optimizer in self._optimizers.items():
             # Run on each seed and accumulate the results
             optimizer_traces = []
-            solutions = []
             for seed in self._seeds:
                 optimizer_trace_df, solution = run_experiment(
                     self._benchmark, optimizer, optimizer_name, seed, self._max_steps
                 )
                 optimizer_traces.append(optimizer_trace_df)
-                solutions.append(solution)
+
+                # Save the solutions from each seed to a Equinox serialized file
+                solution_file_name = os.path.join(
+                    results_dir, f"{optimizer_name}_solution_{seed}.eqx"
+                )
+                eqx.tree_serialise_leaves(solution_file_name, solution)
+                solution_file_names.append(solution_file_name)
 
             # Concatenate the optimizer_traces from each seed into one DataFrame and
             # save it to a CSV file in the optimizer_traces directory.
@@ -141,24 +145,5 @@ class ExperimentSuite:
             trace_file_name = os.path.join(results_dir, f"{optimizer_name}_trace.csv")
             optimizer_traces.to_csv(trace_file_name, index=False)
             trace_file_names.append(trace_file_name)
-
-            # Save the solutions from each seed to a JSON file in the solutions
-            # directory.
-            solution_file_name = os.path.join(
-                results_dir, f"{optimizer_name}_solution.json"
-            )
-            with open(
-                solution_file_name,
-                "w",
-                encoding="utf-8",
-            ) as solutions_file:
-                json.dump(
-                    solutions,
-                    solutions_file,
-                    default=lambda obj: obj.tolist()
-                    if isinstance(obj, Shaped[Array, "..."])
-                    else obj,
-                )
-            solution_file_names.append(solution_file_name)
 
         return params_file_name, trace_file_names, solution_file_names

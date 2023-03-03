@@ -25,9 +25,14 @@ class Benchmark(ABC):
 
     Benchmarks must accept PyTrees (i.e. arrays or nested lists/dicts of arrays) as
     solutions/decision variables to ensure compatibility with JAX.
+
+    Attributes:
+        render_extension: the file extension to use when saving rendered solutions.
     """
 
     _name: str = "AbstractBenchmark"
+
+    render_extension: str = "png"
 
     @classmethod
     @property
