@@ -10,6 +10,7 @@ optimizers/gd
 optimizers/bgd
 optimizers/vpg
 optimizers/mcmc
+optimizers/optax
 ```
 
 ```{eval-rst}
