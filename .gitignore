@@ -1,3 +1,5 @@
+scripts/*/results/
+
 .mypy_cache/
 /.coverage
 /.coverage.*
