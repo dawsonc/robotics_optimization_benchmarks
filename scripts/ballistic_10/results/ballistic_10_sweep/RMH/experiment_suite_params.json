@@ -1,0 +1,37 @@
+{
+  "name": "ballistic_10",
+  "description": "10-dimensional ballistic benchmark.",
+  "seeds": [0, 1, 2, 3, 4],
+  "max_steps": 1000,
+  "benchmark_name": "ballistic",
+  "benchmark_hparams": { "dimension": 10 },
+  "optimizer_specs": [
+    {
+      "name": "RMH {'use_gradients': False, 'use_metropolis': True, 'step_size': 0.1}",
+      "type": "MCMC",
+      "hparams": {
+        "use_gradients": false,
+        "use_metropolis": true,
+        "step_size": 0.1
+      }
+    },
+    {
+      "name": "RMH {'use_gradients': False, 'use_metropolis': True, 'step_size': 0.01}",
+      "type": "MCMC",
+      "hparams": {
+        "use_gradients": false,
+        "use_metropolis": true,
+        "step_size": 0.01
+      }
+    },
+    {
+      "name": "RMH {'use_gradients': False, 'use_metropolis': True, 'step_size': 0.001}",
+      "type": "MCMC",
+      "hparams": {
+        "use_gradients": false,
+        "use_metropolis": true,
+        "step_size": 0.001
+      }
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "name": "ballistic_10",
+  "description": "10-dimensional ballistic benchmark.",
+  "seeds": [0, 1, 2, 3, 4],
+  "max_steps": 1000,
+  "benchmark_name": "ballistic",
+  "benchmark_hparams": { "dimension": 10 },
+  "optimizer_specs": [
+    {
+      "name": "REINFORCE {'step_size': 0.1, 'perturbation_stddev': 0.5}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.1,
+        "perturbation_stddev": 0.5,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.1, 'perturbation_stddev': 0.1}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.1,
+        "perturbation_stddev": 0.1,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.1, 'perturbation_stddev': 0.05}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.1,
+        "perturbation_stddev": 0.05,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.01, 'perturbation_stddev': 0.5}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.01,
+        "perturbation_stddev": 0.5,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.01, 'perturbation_stddev': 0.1}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.01,
+        "perturbation_stddev": 0.1,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.01, 'perturbation_stddev': 0.05}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.01,
+        "perturbation_stddev": 0.05,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.001, 'perturbation_stddev': 0.5}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.001,
+        "perturbation_stddev": 0.5,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.001, 'perturbation_stddev': 0.1}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.001,
+        "perturbation_stddev": 0.1,
+        "baseline_update_rate": 0.5
+      }
+    },
+    {
+      "name": "REINFORCE {'step_size': 0.001, 'perturbation_stddev': 0.05}",
+      "type": "VPG",
+      "hparams": {
+        "step_size": 0.001,
+        "perturbation_stddev": 0.05,
+        "baseline_update_rate": 0.5
+      }
+    }
+  ]
+}
