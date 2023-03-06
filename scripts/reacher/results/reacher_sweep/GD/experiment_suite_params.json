@@ -1,0 +1,22 @@
+{
+  "name": "reacher",
+  "description": "Brax reacher benchmark.",
+  "seeds": [0, 1, 2, 3, 4],
+  "max_steps": 1000,
+  "benchmark_name": "brax",
+  "benchmark_hparams": {
+    "task": "reacher",
+    "policy_network_width": 32,
+    "policy_network_depth": 2,
+    "horizon": 10
+  },
+  "optimizer_specs": [
+    {
+      "name": "GD {'step_size': 0.001}",
+      "type": "GD",
+      "hparams": {
+        "step_size": 0.001
+      }
+    }
+  ]
+}

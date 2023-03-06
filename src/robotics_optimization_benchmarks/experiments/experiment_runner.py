@@ -3,7 +3,6 @@ import time
 
 import jax
 import jax.random as jrandom
-import jax.tree_util as jtu
 import pandas as pd
 from beartype import beartype
 from beartype.typing import Tuple
@@ -11,21 +10,6 @@ from beartype.typing import Tuple
 from robotics_optimization_benchmarks.benchmarks import Benchmark
 from robotics_optimization_benchmarks.optimizers import Optimizer
 from robotics_optimization_benchmarks.types import DecisionVariable
-
-
-# Start by defining some useful functions for running experiments.
-
-
-def _wrap_for_scan(step_function):
-    """Make an optimizer step function compatible with `jax.lax.scan`."""  # noqa: D202
-
-    # scan expects the function to return a tuple of (output, carry), both of which
-    # are the same in this case.
-    def wrapped(state, step_key):
-        next_state = step_function(state, step_key)
-        return next_state, next_state
-
-    return wrapped
 
 
 @beartype
@@ -58,16 +42,27 @@ def run_experiment(
         benchmark.evaluate_solution, benchmark.sample_initial_guess(init_key)
     )
 
+    # Pre-run the jitted step function to compile it (key doesn't matter since we
+    # don't use the results of this step)
+    step_fn = jax.jit(step_fn)
+    step_fn(initial_opt_state, init_key)
+
     # Run the optimizer starting from this seed, which gives us a trace of solutions and
     # objectives for each step. Make sure to record the time this takes!
     start = time.perf_counter()
-    _, states = jax.lax.scan(
-        jax.jit(_wrap_for_scan(step_fn)),
-        initial_opt_state,
-        jrandom.split(opt_key, max_steps),
-    )
+    keys = jrandom.split(opt_key, max_steps)
+    opt_state = initial_opt_state
+    values = []
+    cumulative_function_calls = []
+    for key in keys:
+        opt_state = step_fn(opt_state, key)
+        values.append(opt_state.objective_value)
+        cumulative_function_calls.append(opt_state.cumulative_function_calls)
     end = time.perf_counter()
     total_time = end - start
+
+    # Clear the compilation cache to avoid OOM errors
+    step_fn._clear_cache()  # pylint: disable=protected-access
 
     # Format the optimizer progress into a dataframe
     optimizer_trace_df = pd.DataFrame(
@@ -76,12 +71,10 @@ def run_experiment(
             "Optimizer type": optimizer.name,
             "Seed": seed,
             "Steps": range(max_steps),
-            "Cumulative objective calls": states.cumulative_function_calls,
-            "Objective": states.objective_value,
+            "Cumulative objective calls": cumulative_function_calls,
+            "Objective": values,
             "Avg. time per step (s)": total_time / max_steps,
         }
     )
-    # Extract the solution at the last step
-    solution = jtu.tree_map(lambda x: x[-1], states.solution)
 
-    return optimizer_trace_df, solution
+    return optimizer_trace_df, opt_state.solution

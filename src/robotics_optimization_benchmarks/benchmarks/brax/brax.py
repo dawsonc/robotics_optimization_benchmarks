@@ -190,9 +190,9 @@ class Brax(Benchmark):
         """
         # Scan over the states
 
-        @jax.jit
+        @jax.checkpoint
         def step(state, _):
-            next_state = jax.jit(env.step)(state, solution(state.obs))
+            next_state = env.step(state, solution(state.obs))
             return next_state, next_state
 
         _, rollout = jax.lax.scan(step, state, None, length=self.horizon)
