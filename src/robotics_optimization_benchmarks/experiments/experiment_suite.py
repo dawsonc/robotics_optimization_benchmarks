@@ -117,7 +117,7 @@ class ExperimentSuite:
         # the experiment suite factory) to a JSON file in the results directory.
         params_file_name = os.path.join(results_dir, "experiment_suite_params.json")
         with open(params_file_name, "w", encoding="utf-8") as params_file:
-            json.dump(self.to_dict(), params_file)
+            json.dump(self.to_dict(), params_file, indent=4)
 
         # For each optimizer, run it on the benchmark for `max_steps` steps, repeating
         # for each seed.
