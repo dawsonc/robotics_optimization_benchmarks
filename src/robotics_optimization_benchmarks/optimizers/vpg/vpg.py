@@ -7,7 +7,6 @@ import jax.random as jrandom
 import jax.tree_util as jtu
 from beartype import beartype
 from beartype.typing import Callable
-from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -80,14 +79,11 @@ class VPG(Optimizer):
 
     @jaxtyped
     @beartype
-    def make_step(
+    def init_state(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
         initial_solution: DecisionVariable,
-    ) -> Tuple[
-        VPGOptimizerState,
-        Callable[[VPGOptimizerState, PRNGKeyArray], VPGOptimizerState],
-    ]:
+    ) -> VPGOptimizerState:
         """Initialize the state of the optimizer.
 
         Args:
@@ -95,11 +91,7 @@ class VPG(Optimizer):
             initial_solution: the initial solution.
 
         Returns:
-            initial_state: The initial state of the optimizer.
-
-            step_fn: A function that takes the current state of the optimizer and a PRNG
-            key and returns the next state of the optimizer, executing one step of
-            the optimization algorithm.
+            The initial state of the optimizer.
         """
         # Create the initial state of the optimizer.
         initial_state = VPGOptimizerState(
@@ -108,6 +100,24 @@ class VPG(Optimizer):
             baseline=jnp.array(0.0),  # Initialize baseline moving average to zero
             cumulative_function_calls=1,
         )
+        return initial_state
+
+    @jaxtyped
+    @beartype
+    def make_step(
+        self,
+        objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
+    ) -> Callable[[VPGOptimizerState, PRNGKeyArray], VPGOptimizerState]:
+        """Initialize the state of the optimizer.
+
+        Args:
+            objective_fn: the objective function to minimize.
+
+        Returns:
+            step_fn: A function that takes the current state of the optimizer and a PRNG
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
+        """  # noqa: D202
 
         # Define the step function (baking in the objective and gradient functions).
         @jaxtyped
@@ -161,4 +171,4 @@ class VPG(Optimizer):
                 ),
             )
 
-        return initial_state, step
+        return step

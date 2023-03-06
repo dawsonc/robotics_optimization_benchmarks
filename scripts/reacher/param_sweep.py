@@ -35,7 +35,7 @@ def sweep_ballistic_10(
             "policy_network_width": 32,
             "policy_network_depth": 2,
         },
-        max_steps=1000,
+        max_steps=10_000,
         optimizer_specs=[
             {
                 "name": f"{optimizer_name} {hparams}",

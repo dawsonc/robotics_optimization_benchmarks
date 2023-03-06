@@ -1,8 +1,11 @@
 """Define a class to setup and run suites of experiments."""
 import json
 import os
+import time
 
 import equinox as eqx
+import jax
+import jax.random as jrandom
 import pandas as pd
 from beartype import beartype
 from beartype.typing import Any
@@ -11,9 +14,6 @@ from beartype.typing import List
 from beartype.typing import Tuple
 
 from robotics_optimization_benchmarks.benchmarks import Benchmark
-from robotics_optimization_benchmarks.experiments.experiment_runner import (
-    run_experiment,
-)
 from robotics_optimization_benchmarks.optimizers import Optimizer
 
 
@@ -124,11 +124,59 @@ class ExperimentSuite:
         trace_file_names = []
         solution_file_names = []
         for optimizer_name, optimizer in self._optimizers.items():
+            # Make the step function for this optimizer
+            step_fn = optimizer.make_step(self._benchmark.evaluate_solution)
+
             # Run on each seed and accumulate the results
             optimizer_traces = []
             for seed in self._seeds:
-                optimizer_trace_df, solution = run_experiment(
-                    self._benchmark, optimizer, optimizer_name, seed, self._max_steps
+                print(f"Running {optimizer_name} with seed {seed}.")
+
+                # Get a JAX random key from the given seed and split it for use in
+                # initialization and running the optimizer
+                init_key, opt_key = jrandom.split(jrandom.PRNGKey(seed))
+
+                # Sample an initial state and initialize the optimizer
+                start = time.perf_counter()
+                initial_opt_state = jax.jit(optimizer.init_state, static_argnums=0)(
+                    self._benchmark.evaluate_solution,
+                    self._benchmark.sample_initial_guess(init_key),
+                )
+
+                # Pre-run the jitted step function to compile it (key doesn't matter
+                # since we don't use the results of this step)
+                step_fn = jax.jit(step_fn)
+                step_fn(initial_opt_state, init_key)
+                end = time.perf_counter()
+                print(f"Init state and compile in {end - start:.2f} seconds.")
+
+                # Run the optimization
+                start = time.perf_counter()
+                keys = jrandom.split(opt_key, self._max_steps)
+                opt_state = initial_opt_state
+                values = []
+                cumulative_function_calls = []
+                for key in keys:
+                    opt_state = step_fn(opt_state, key)
+                    values.append(opt_state.objective_value)
+                    cumulative_function_calls.append(
+                        opt_state.cumulative_function_calls
+                    )
+                end = time.perf_counter()
+                total_time = end - start
+                print(f"Ran in {total_time:.2f} seconds")
+
+                # Format the optimizer progress into a dataframe
+                optimizer_trace_df = pd.DataFrame(
+                    {
+                        "Optimizer name": optimizer_name,
+                        "Optimizer type": optimizer.name,
+                        "Seed": seed,
+                        "Steps": range(self._max_steps),
+                        "Cumulative objective calls": cumulative_function_calls,
+                        "Objective": values,
+                        "Avg. time per step (s)": total_time / self._max_steps,
+                    }
                 )
                 optimizer_traces.append(optimizer_trace_df)
 
@@ -136,7 +184,7 @@ class ExperimentSuite:
                 solution_file_name = os.path.join(
                     results_dir, f"{optimizer_name}_solution_{seed}.eqx"
                 )
-                eqx.tree_serialise_leaves(solution_file_name, solution)
+                eqx.tree_serialise_leaves(solution_file_name, opt_state.solution)
                 solution_file_names.append(solution_file_name)
 
             # Concatenate the optimizer_traces from each seed into one DataFrame and

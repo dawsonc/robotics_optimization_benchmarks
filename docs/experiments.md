@@ -13,5 +13,4 @@ maxdepth: 1
 experiments/experiment_suite_factory
 experiments/experiment_suite
 experiments/visualization
-experiments/experiment_runner
 ```

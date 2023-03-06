@@ -7,7 +7,6 @@ from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Callable
 from beartype.typing import Dict
-from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -84,20 +83,32 @@ class Optimizer(ABC):
     def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
+    ) -> Callable[[OptimizerState, PRNGKeyArray], OptimizerState]:
+        """Make the step function for this optimizer.
+
+        Args:
+            objective_fn: the objective function to minimize.
+
+        Returns:
+            step_fn: A function that takes the current state of the optimizer and a PRNG
+            key and returns the next state of the optimizer, executing one step of
+            the optimization algorithm.
+        """
+
+    @abstractmethod
+    @jaxtyped
+    @beartype
+    def init_state(
+        self,
+        objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
         initial_solution: DecisionVariable,
-    ) -> Tuple[
-        OptimizerState, Callable[[OptimizerState, PRNGKeyArray], OptimizerState]
-    ]:
-        """Initialize the state of the optimizer and return the step function.
+    ) -> OptimizerState:
+        """Initialize the state of the optimizer.
 
         Args:
             objective_fn: the objective function to minimize.
             initial_solution: the initial solution.
 
         Returns:
-            initial_state: The initial state of the optimizer.
-
-            step_fn: A function that takes the current state of the optimizer and a PRNG
-            key and returns the next state of the optimizer, executing one step of
-            the optimization algorithm.
+            The initial state of the optimizer.
         """

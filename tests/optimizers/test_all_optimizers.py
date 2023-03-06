@@ -77,15 +77,27 @@ def test_optimizer_description(optimizer_name, params):
 
 
 @pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
+def test_optimizer_init_state(optimizer_name, params, quadratic_benchmark):
+    """Test initialization of optimizer state."""
+    optimizer = make(optimizer_name).from_dict(params)
+
+    key = jrandom.PRNGKey(0)
+    initial_guess = quadratic_benchmark.sample_initial_guess(key)
+    state = optimizer.init_state(quadratic_benchmark.evaluate_solution, initial_guess)
+
+    assert state is not None
+    assert_trees_all_close(state.solution, initial_guess)
+
+
+@pytest.mark.parametrize("optimizer_name,params", optimizers_to_test)
 def test_optimizer_make_step(optimizer_name, params, quadratic_benchmark):
     """Test initialization of optimizer state."""
     optimizer = make(optimizer_name).from_dict(params)
 
     key = jrandom.PRNGKey(0)
     initial_guess = quadratic_benchmark.sample_initial_guess(key)
-    state, step = optimizer.make_step(
-        quadratic_benchmark.evaluate_solution, initial_guess
-    )
+    state = optimizer.init_state(quadratic_benchmark.evaluate_solution, initial_guess)
+    step = optimizer.make_step(quadratic_benchmark.evaluate_solution)
 
     assert state is not None
     assert_trees_all_close(state.solution, initial_guess)
@@ -100,9 +112,8 @@ def test_optimizer_step(optimizer_name, params, variant, quadratic_benchmark):
 
     key = jrandom.PRNGKey(0)
     initial_guess = quadratic_benchmark.sample_initial_guess(key)
-    state, step = optimizer.make_step(
-        quadratic_benchmark.evaluate_solution, initial_guess
-    )
+    state = optimizer.init_state(quadratic_benchmark.evaluate_solution, initial_guess)
+    step = optimizer.make_step(quadratic_benchmark.evaluate_solution)
 
     # Run the step function a few times to make sure it's self-compatible
     for _ in range(10):
@@ -119,9 +130,8 @@ def test_optimizer_optimization(optimizer_name, params, quadratic_benchmark):
     key = jrandom.PRNGKey(0)
     initial_guess = quadratic_benchmark.sample_initial_guess(key)
 
-    state, step = optimizer.make_step(
-        quadratic_benchmark.evaluate_solution, initial_guess
-    )
+    state = optimizer.init_state(quadratic_benchmark.evaluate_solution, initial_guess)
+    step = optimizer.make_step(quadratic_benchmark.evaluate_solution)
     step = jax.jit(step)
 
     # Run the optimization loop for a fixed number of steps

@@ -7,7 +7,6 @@ from beartype.typing import Any
 from beartype.typing import Callable
 from beartype.typing import Dict
 from beartype.typing import NamedTuple
-from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -78,32 +77,17 @@ class Optax(Optimizer):
     def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
-        initial_solution: DecisionVariable,
-    ) -> Tuple[
-        OptaxOptimizerState,
-        Callable[[OptaxOptimizerState, PRNGKeyArray], OptaxOptimizerState],
-    ]:
+    ) -> Callable[[OptaxOptimizerState, PRNGKeyArray], OptaxOptimizerState]:
         """Initialize the state of the optimizer.
 
         Args:
             objective_fn: the objective function to minimize.
-            initial_solution: the initial solution.
 
         Returns:
-            initial_state: The initial state of the optimizer.
-
-            step_fn: A function that takes the current state of the optimizer and a PRNG
+            A function that takes the current state of the optimizer and a PRNG
             key and returns the next state of the optimizer, executing one step of
             the optimization algorithm.
         """
-        # Create the initial state of the optimizer.
-        initial_state = OptaxOptimizerState(
-            solution=initial_solution,
-            objective_value=objective_fn(initial_solution),
-            cumulative_function_calls=0,
-            optax_state=self._optimizer.init(initial_solution),
-        )
-
         # Auto-diff the objective to pass into our step function
         value_and_grad_fn = jax.value_and_grad(objective_fn)
 
@@ -134,4 +118,29 @@ class Optax(Optimizer):
                 optax_state=next_optax_state,
             )
 
-        return initial_state, step
+        return step
+
+    @jaxtyped
+    @beartype
+    def init_state(
+        self,
+        objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
+        initial_solution: DecisionVariable,
+    ) -> OptaxOptimizerState:
+        """Initialize the state of the optimizer.
+
+        Args:
+            objective_fn: the objective function to minimize.
+            initial_solution: the initial solution.
+
+        Returns:
+            The initial state of the optimizer.
+        """
+        # Create the initial state of the optimizer.
+        initial_state = OptaxOptimizerState(
+            solution=initial_solution,
+            objective_value=objective_fn(initial_solution),
+            cumulative_function_calls=0,
+            optax_state=self._optimizer.init(initial_solution),
+        )
+        return initial_state

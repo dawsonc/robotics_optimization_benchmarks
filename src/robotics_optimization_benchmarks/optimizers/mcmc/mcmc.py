@@ -11,7 +11,6 @@ from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Callable
 from beartype.typing import Dict
-from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -151,21 +150,14 @@ class MCMC(Optimizer):
     def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
-        initial_solution: DecisionVariable,
-    ) -> Tuple[
-        MCMCOptimizerState,
-        Callable[[MCMCOptimizerState, PRNGKeyArray], MCMCOptimizerState],
-    ]:
+    ) -> Callable[[MCMCOptimizerState, PRNGKeyArray], MCMCOptimizerState]:
         """Initialize the state of the optimizer and return the step function.
 
         Args:
             objective_fn: the objective function to minimize.
-            initial_solution: the initial solution.
 
         Returns:
-            initial_state: The initial state of the optimizer.
-
-            step_fn: A function that takes the current state of the optimizer and a PRNG
+            A function that takes the current state of the optimizer and a PRNG
             key and returns the next state of the optimizer, executing one step of
             the optimization algorithm.
         """
@@ -177,16 +169,6 @@ class MCMC(Optimizer):
         # the initial objective value and gradient (caching these in the state
         # halves the number of objective function and gradient calls we need).
         logdensity_and_grad_fn = jax.value_and_grad(logdensity_fn)
-        logdensity, logdensity_grad = logdensity_and_grad_fn(initial_solution)
-
-        # Initialize the state.
-        initial_state = MCMCOptimizerState(
-            solution=initial_solution,
-            objective_value=-logdensity,
-            logdensity=logdensity,
-            logdensity_grad=logdensity_grad,
-            cumulative_function_calls=1,
-        )
 
         # Define the step function (baking in the objective and gradient functions).
         @jaxtyped
@@ -283,4 +265,41 @@ class MCMC(Optimizer):
 
             return accepted_state
 
-        return initial_state, step
+        return step
+
+    @jaxtyped
+    @beartype
+    def init_state(
+        self,
+        objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
+        initial_solution: DecisionVariable,
+    ) -> MCMCOptimizerState:
+        """Initialize the state of the optimizer.
+
+        Args:
+            objective_fn: the objective function to minimize.
+            initial_solution: the initial solution.
+
+        Returns:
+            The initial state of the optimizer.
+        """
+        # Convert the objective function to a log density function by negating it
+        # This means that low costs -> high densitites -> more likely samples
+        logdensity_fn = lambda x: -objective_fn(x)  # pylint: disable-all
+
+        # Wrap the objective function to return its value and gradient, then get
+        # the initial objective value and gradient (caching these in the state
+        # halves the number of objective function and gradient calls we need).
+        logdensity_and_grad_fn = jax.value_and_grad(logdensity_fn)
+        logdensity, logdensity_grad = logdensity_and_grad_fn(initial_solution)
+
+        # Initialize the state.
+        initial_state = MCMCOptimizerState(
+            solution=initial_solution,
+            objective_value=-logdensity,
+            logdensity=logdensity,
+            logdensity_grad=logdensity_grad,
+            cumulative_function_calls=1,
+        )
+
+        return initial_state

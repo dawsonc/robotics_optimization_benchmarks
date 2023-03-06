@@ -6,7 +6,6 @@ from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Callable
 from beartype.typing import Dict
-from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -56,34 +55,19 @@ class GD(Optimizer):
     def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
-        initial_solution: DecisionVariable,
-    ) -> Tuple[
-        GDOptimizerState, Callable[[GDOptimizerState, PRNGKeyArray], GDOptimizerState]
-    ]:
+    ) -> Callable[[GDOptimizerState, PRNGKeyArray], GDOptimizerState]:
         """Initialize the state of the optimizer.
 
         Args:
             objective_fn: the objective function to minimize.
-            initial_solution: the initial solution.
 
         Returns:
-            initial_state: The initial state of the optimizer.
-
-            step_fn: A function that takes the current state of the optimizer and a PRNG
+            A function that takes the current state of the optimizer and a PRNG
             key and returns the next state of the optimizer, executing one step of
             the optimization algorithm.
         """
         # Auto-diff the objective to pass into our step function
         value_and_grad_fn = jax.value_and_grad(objective_fn)
-
-        # Create the initial state of the optimizer.
-        value, grad = value_and_grad_fn(initial_solution)
-        initial_state = GDOptimizerState(
-            solution=initial_solution,
-            objective_value=value,
-            cumulative_function_calls=0,
-            grad=grad,
-        )
 
         # Define the step function (baking in the objective and gradient functions).
         @jaxtyped
@@ -112,4 +96,33 @@ class GD(Optimizer):
                 cumulative_function_calls=state.cumulative_function_calls + 1,
             )
 
-        return initial_state, step
+        return step
+
+    @jaxtyped
+    @beartype
+    def init_state(
+        self,
+        objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
+        initial_solution: DecisionVariable,
+    ) -> GDOptimizerState:
+        """Initialize the state of the optimizer.
+
+        Args:
+            objective_fn: the objective function to minimize.
+            initial_solution: the initial solution.
+
+        Returns:
+            The initial state of the optimizer.
+        """
+        # Auto-diff the objective to pass into our step function
+        value_and_grad_fn = jax.value_and_grad(objective_fn)
+
+        # Create the initial state of the optimizer.
+        value, grad = value_and_grad_fn(initial_solution)
+        initial_state = GDOptimizerState(
+            solution=initial_solution,
+            objective_value=value,
+            cumulative_function_calls=0,
+            grad=grad,
+        )
+        return initial_state

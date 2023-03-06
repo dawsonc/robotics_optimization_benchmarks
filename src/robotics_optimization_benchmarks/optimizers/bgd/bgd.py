@@ -7,7 +7,6 @@ from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Callable
 from beartype.typing import Dict
-from beartype.typing import Tuple
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -67,29 +66,17 @@ class BGD(Optimizer):
     def make_step(
         self,
         objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
-        initial_solution: DecisionVariable,
-    ) -> Tuple[
-        OptimizerState, Callable[[OptimizerState, PRNGKeyArray], OptimizerState]
-    ]:
+    ) -> Callable[[OptimizerState, PRNGKeyArray], OptimizerState]:
         """Initialize the state of the optimizer.
 
         Args:
             objective_fn: the objective function to minimize.
-            initial_solution: the initial solution.
 
         Returns:
-            initial_state: The initial state of the optimizer.
-
-            step_fn: A function that takes the current state of the optimizer and a PRNG
+            A function that takes the current state of the optimizer and a PRNG
             key and returns the next state of the optimizer, executing one step of
             the optimization algorithm.
-        """
-        # Create the initial state of the optimizer.
-        initial_state = OptimizerState(
-            solution=initial_solution,
-            objective_value=objective_fn(initial_solution),
-            cumulative_function_calls=1,
-        )
+        """  # noqa: D202
 
         # The zero-order batched gradient estimator is the average of a bunch of
         # individual zero-order gradient estimates, so we need a function to compute
@@ -188,4 +175,28 @@ class BGD(Optimizer):
                 ),
             )
 
-        return initial_state, step
+        return step
+
+    @jaxtyped
+    @beartype
+    def init_state(
+        self,
+        objective_fn: Callable[[DecisionVariable], Float[Array, ""]],
+        initial_solution: DecisionVariable,
+    ) -> OptimizerState:
+        """Initialize the state of the optimizer.
+
+        Args:
+            objective_fn: the objective function to minimize.
+            initial_solution: the initial solution.
+
+        Returns:
+            The initial state of the optimizer.
+        """
+        # Create the initial state of the optimizer.
+        initial_state = OptimizerState(
+            solution=initial_solution,
+            objective_value=objective_fn(initial_solution),
+            cumulative_function_calls=1,
+        )
+        return initial_state
