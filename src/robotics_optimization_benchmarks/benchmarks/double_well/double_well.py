@@ -51,7 +51,7 @@ class DoubleWell(Benchmark):
     def sample_initial_guess(self, key: PRNGKeyArray) -> DecisionVariable:
         """Sample a random initial solution to the problem.
 
-        x_0 ~ N(-1, I_{n x n})
+        x_0 ~ N(-1.5, 0.1 * I_{n x n})
 
         Args:
             key: a JAX PRNG key used to sample the solution.
@@ -59,7 +59,7 @@ class DoubleWell(Benchmark):
         Returns:
             A random initial solution to the problem in R^{self.dimension}.
         """
-        return jax.random.normal(key, shape=(self.dimension,)) - 1.0
+        return 0.1 * jax.random.normal(key, shape=(self.dimension,)) - 1.5
 
     @jaxtyped
     @beartype

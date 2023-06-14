@@ -72,15 +72,29 @@ def run_experiment(
     # Format the optimizer progress into a dataframe
     optimizer_trace_df = pd.DataFrame(
         {
-            "Optimizer name": optimizer_name,
+            "Algorithm": optimizer_name,
             "Optimizer type": optimizer.name,
             "Seed": seed,
-            "Steps": range(max_steps),
+            "Steps": range(1, max_steps + 1),
             "Cumulative objective calls": states.cumulative_function_calls,
             "Objective": states.objective_value,
+            "Best objective": jax.lax.cummin(states.objective_value),
             "Avg. time per step (s)": total_time / max_steps,
         }
     )
+
+    # Add an entry for the initial state
+    optimizer_trace_df.loc[len(optimizer_trace_df.index)] = {
+        "Algorithm": optimizer_name,
+        "Optimizer type": optimizer.name,
+        "Seed": seed,
+        "Steps": 0,
+        "Cumulative objective calls": 0,
+        "Objective": initial_opt_state.objective_value,
+        "Best objective": initial_opt_state.objective_value,
+        "Avg. time per step (s)": total_time / max_steps,
+    }
+
     # Extract the solution at the last step
     solution = jtu.tree_map(lambda x: x[-1], states.solution)
 

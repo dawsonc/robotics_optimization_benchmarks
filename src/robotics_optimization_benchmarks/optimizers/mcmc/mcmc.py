@@ -31,8 +31,8 @@ class MCMCOptimizerState(OptimizerState):
         cumulative_objective_calls: the cumulative number of objective function calls.
         cumulative_gradient_calls: the cumulative number of evaluations of the gradient
         logdensity: the negative of the objective value at the current solution.
-        current_objective_grad: the negative gradient of the objective function at the
-            current solution.
+        logdensity_grad: the negative gradient of the objective function at the current
+            solution.
     """
 
     logdensity: Float[Array, ""]

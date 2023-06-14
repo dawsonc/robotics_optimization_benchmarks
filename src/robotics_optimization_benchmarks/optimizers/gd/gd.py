@@ -1,4 +1,5 @@
 """Implement the gradient descent optimizer."""
+import chex
 import jax
 import jax.tree_util as jtu
 from beartype import beartype
@@ -14,6 +15,21 @@ from robotics_optimization_benchmarks.optimizers.optimizer import Optimizer
 from robotics_optimization_benchmarks.optimizers.optimizer import OptimizerState
 from robotics_optimization_benchmarks.types import DecisionVariable
 from robotics_optimization_benchmarks.types import PRNGKeyArray
+
+
+@chex.dataclass
+class GDOptimizerState(OptimizerState):
+    """A struct for storing the state of a GD optimizer.
+
+    Attributes:
+        solution: the current solution.
+        cumulative_objective_calls: the cumulative number of objective function calls.
+        cumulative_gradient_calls: the cumulative number of evaluations of the gradient
+        grad: the gradient of the objective function at the current
+            solution.
+    """
+
+    grad: DecisionVariable
 
 
 class GD(Optimizer):
@@ -58,20 +74,22 @@ class GD(Optimizer):
             key and returns the next state of the optimizer, executing one step of
             the optimization algorithm.
         """
-        # Create the initial state of the optimizer.
-        initial_state = OptimizerState(
-            solution=initial_solution,
-            objective_value=objective_fn(initial_solution),
-            cumulative_function_calls=0,
-        )
-
         # Auto-diff the objective to pass into our step function
         value_and_grad_fn = jax.value_and_grad(objective_fn)
+
+        # Create the initial state of the optimizer.
+        value, grad = value_and_grad_fn(initial_solution)
+        initial_state = GDOptimizerState(
+            solution=initial_solution,
+            objective_value=value,
+            cumulative_function_calls=0,
+            grad=grad,
+        )
 
         # Define the step function (baking in the objective and gradient functions).
         @jaxtyped
         @beartype
-        def step(state: OptimizerState, _: PRNGKeyArray) -> OptimizerState:
+        def step(state: GDOptimizerState, _: PRNGKeyArray) -> GDOptimizerState:
             """Take one step towards minimizing the objective.
 
             Args:
@@ -81,16 +99,19 @@ class GD(Optimizer):
             Returns:
                 The solution to the optimization problem.
             """
-            value, gradient = value_and_grad_fn(state.solution)
             next_solution = jtu.tree_map(
-                lambda x, grad: x - self._step_size * grad, state.solution, gradient
+                lambda x, grad: x - self._step_size * grad, state.solution, state.grad
             )
 
-            return OptimizerState(
+            # Update the value and gradient
+            value, gradient = value_and_grad_fn(next_solution)
+
+            return GDOptimizerState(
                 solution=next_solution,
                 objective_value=value,
                 # We evaluated the gradient once to step to the next solution.
                 cumulative_function_calls=state.cumulative_function_calls + 1,
+                grad=gradient,
             )
 
         return initial_state, step
