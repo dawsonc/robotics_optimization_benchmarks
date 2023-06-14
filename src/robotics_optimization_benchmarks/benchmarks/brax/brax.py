@@ -79,15 +79,15 @@ class Brax(Benchmark):
         - `reacher <github.com/google/brax/blob/main/brax/envs/reacher.py>`_: from
           `OpenAI Gym Reacher-v2 <gym.openai.com/envs/Reacher-v2/>`_: makes a two-joint
           reacher arm move its tip to a target.
+        - `pusher <github.com/google/brax/blob/main/brax/envs/pusher.py>`_: a robot arm
+            pushes an object to a target location.
         - `walker2d <github.com/google/brax/blob/main/brax/envs/walker2d.py>`_ from
           `OpenAI Gym Walker2d-v2 <gym.openai.com/envs/Walker2d-v2/>`_: make a
           two-dimensional bipedal robot walk forward as fast as possible
-        - `fetch <github.com/google/brax/blob/main/brax/envs/fetch.py>`_: make a
-          three-dimensional dog chase after a moving target.
-        - `grasp <github.com/google/brax/blob/main/brax/envs/grasp.py>`_: a grabber
-          hand must pick up a ball and carry it to a moving target.
-        - `ur5e <github.com/google/brax/blob/main/brax/envs/ur5e.py>`_: a ur5e robot
-          arm that moves its end effector to a series of targets.
+        - `inverted_pendulum <github.com/google/brax/blob/main/brax/envs/inverted_pendulum.py>`_:
+            an inverted pendulum.
+        - `inverted_double_pendulum <github.com/google/brax/blob/main/brax/envs/inverted_double_pendulum.py>`_:  # noqa
+            an inverted double pendulum.
 
 
     Attributes:
@@ -133,7 +133,7 @@ class Brax(Benchmark):
 
         # Initialize the environment and use it to specify the input and output
         # dimensions of the policy network.
-        self._env = brax.envs.create(task)
+        self._env = brax.envs.get_environment(env_name=task, backend="positional")
         self._n_actions = self._env.action_size
         self._n_observations = self._env.observation_size
 
