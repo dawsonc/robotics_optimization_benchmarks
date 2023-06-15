@@ -116,10 +116,9 @@ class ExperimentSuite:
                 solution = run_experiment(
                     self._benchmark,
                     optimizer,
-                    optimizer_name,
                     seed,
                     self._max_steps,
-                    self._name,
+                    logger,
                 )
 
                 logger.save_artifact("solution", solution)
