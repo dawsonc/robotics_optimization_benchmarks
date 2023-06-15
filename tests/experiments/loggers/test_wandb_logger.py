@@ -12,6 +12,9 @@ from robotics_optimization_benchmarks.experiments.loggers.wandb_logger import (
 
 def test_wandb_logger(tmpdir) -> None:
     """Test that we can log data to a file."""
+    # Disable sending results to remote
+    os.environ["WANDB_MODE"] = "disabled"
+
     # Set up a logger
     save_dir = os.path.join(tmpdir, "results")
     logger = WandbLogger(save_dir)
@@ -29,6 +32,9 @@ def test_wandb_logger(tmpdir) -> None:
 
 def test_wandb_logger_multiple_runs(tmpdir) -> None:
     """Test that we can log data to a file."""
+    # Disable sending results to remote
+    os.environ["WANDB_MODE"] = "disabled"
+
     # Set up a logger
     save_dir = os.path.join(tmpdir, "results")
     logger = WandbLogger(save_dir)
@@ -52,6 +58,9 @@ def test_wandb_logger_multiple_runs(tmpdir) -> None:
 
 def test_wandb_logger_save_and_load_artifact(tmpdir) -> None:
     """Test saving an artifact."""
+    # Disable sending results to remote
+    os.environ["WANDB_MODE"] = "disabled"
+
     # Create a logger
     save_dir = os.path.join(tmpdir, "results")
     logger = WandbLogger(save_dir)
