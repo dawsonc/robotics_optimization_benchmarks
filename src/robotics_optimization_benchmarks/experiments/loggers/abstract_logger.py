@@ -40,12 +40,13 @@ class Logger(ABC):
     @abstractmethod
     @beartype
     @jaxtyped
-    def save_artifact(self, name: str, data: PyTree) -> str:
+    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
         """Save an artifact to the logger.
 
         Args:
             name: the name of the artifact
             data: the data to save
+            type: the type of the artifact
 
         Returns:
             the string identifier for the saved artifact

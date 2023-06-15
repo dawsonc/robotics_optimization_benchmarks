@@ -1,18 +1,20 @@
-"""Define tests for the file logger."""
+"""Define tests for the WandB logger."""
 import os
 import pathlib
 
 import jax.numpy as jnp
 import pytest
 
-from robotics_optimization_benchmarks.experiments.loggers.file_logger import FileLogger
+from robotics_optimization_benchmarks.experiments.loggers.wandb_logger import (
+    WandbLogger,
+)
 
 
-def test_file_logger(tmpdir) -> None:
+def test_wandb_logger(tmpdir) -> None:
     """Test that we can log data to a file."""
     # Set up a logger
     save_dir = os.path.join(tmpdir, "results")
-    logger = FileLogger(save_dir)
+    logger = WandbLogger(save_dir)
 
     # Start logging and log a few data packets
     logger.start("test", {"learning_rate": 1e-3})
@@ -25,11 +27,11 @@ def test_file_logger(tmpdir) -> None:
     assert len(list(pathlib.Path(save_dir).glob("**/*.csv"))) == 1  # logs
 
 
-def test_file_logger_multiple_runs(tmpdir) -> None:
+def test_wandb_logger_multiple_runs(tmpdir) -> None:
     """Test that we can log data to a file."""
     # Set up a logger
     save_dir = os.path.join(tmpdir, "results")
-    logger = FileLogger(save_dir)
+    logger = WandbLogger(save_dir)
 
     # Start logging and log a few data packets
     logger.start("test1", {"learning_rate": 1e-3})
@@ -48,11 +50,11 @@ def test_file_logger_multiple_runs(tmpdir) -> None:
     assert len(list(pathlib.Path(save_dir).glob("**/*.csv"))) == 2  # logs
 
 
-def test_file_logger_save_and_load_artifact(tmpdir) -> None:
+def test_wandb_logger_save_and_load_artifact(tmpdir) -> None:
     """Test saving an artifact."""
     # Create a logger
     save_dir = os.path.join(tmpdir, "results")
-    logger = FileLogger(save_dir)
+    logger = WandbLogger(save_dir)
 
     # Make an artifact to try to save
     my_pytree = {"a": 1, "b": jnp.array([1, 2, 3])}
