@@ -37,8 +37,7 @@ class MockLogger(Logger):
         return name
 
     def load_artifact(self, artifact_path: str, example_pytree: PyTree) -> PyTree:
-        """Load an artifact."""
-        return self.saved_artifacts[artifact_path]
+        """Load an artifact (noop)."""
 
 
 # Make a fixture for a logger
@@ -100,7 +99,7 @@ def test_experiment_suite_factory_user_story(logger) -> None:
 
     # As a user, I want to run the experiment suite and save the results to a file, so
     # that I can analyze the results later and reproduce my results.
-    experiment_suite.run(logger)
+    experiment_suite.run(logger, save_artifacts=True)
 
     # Make sure that the logger was started and finished
     assert logger.started
@@ -108,6 +107,9 @@ def test_experiment_suite_factory_user_story(logger) -> None:
 
     # We should have logged several packets
     assert len(logger.log_data) > 1
+
+    # We should have saved the artifact
+    assert len(logger.saved_artifacts) > 0
 
 
 def test_experiment_suite_factory_duplicate_optimizer_names() -> None:
