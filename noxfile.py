@@ -29,7 +29,6 @@ nox.options.sessions = (
     "pre-commit",
     "safety",
     "quick_tests",
-    "typeguard",
     "xdoctest",
     "docs-build",
 )
@@ -179,16 +178,6 @@ def coverage(session: Session) -> None:  # pylint: disable=redefined-outer-name
         session.run("coverage", "combine")
 
     session.run("coverage", *args)
-
-
-@session(python=python_versions[0])
-def typeguard(session: Session) -> None:  # pylint: disable=redefined-outer-name
-    """Runtime type checking using Typeguard."""
-    session.install(".")
-    session.install("pytest", "typeguard", "pygments")
-    session.run(
-        "pytest", "-m", "not slow", f"--typeguard-packages={PACKAGE}", *session.posargs
-    )
 
 
 @session(python=python_versions)

@@ -1,4 +1,5 @@
 """Define an interface for logging using WandB."""
+import wandb
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
@@ -6,7 +7,6 @@ from beartype.typing import Optional
 from jaxtyping import PyTree
 from jaxtyping import jaxtyped
 
-import wandb
 from robotics_optimization_benchmarks.experiments.loggers.file_logger import FileLogger
 
 
