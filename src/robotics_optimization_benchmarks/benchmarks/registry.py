@@ -11,6 +11,7 @@ from robotics_optimization_benchmarks.benchmarks.nl_opt import DoubleWell
 from robotics_optimization_benchmarks.benchmarks.nl_opt import Himmelblau
 from robotics_optimization_benchmarks.benchmarks.nl_opt import Quadratic
 from robotics_optimization_benchmarks.benchmarks.nl_opt import Rosenbrock
+from robotics_optimization_benchmarks.benchmarks.nl_opt import StyblinskiTang
 from robotics_optimization_benchmarks.benchmarks.nl_opt import ThreeHumpCamel
 
 
@@ -74,4 +75,5 @@ register(DoubleWell.name, DoubleWell)
 register(Ackley.name, Ackley)
 register(Rosenbrock.name, Rosenbrock)
 register(Himmelblau.name, Himmelblau)
+register(StyblinskiTang.name, StyblinskiTang)
 register(ThreeHumpCamel.name, ThreeHumpCamel)
