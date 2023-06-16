@@ -86,11 +86,12 @@ class ExperimentSuite:
             ],
         }
 
-    def run(self, logger: Logger) -> None:
+    def run(self, logger: Logger, save_solution: bool = False) -> None:
         """Run the experiment suite.
 
         Args:
             logger: the object to use to log the results
+            save_solution: whether to save the solution to the logger or not
         """
         # Run each optimizer, logging the results as we go.
         for optimizer_name, optimizer in self._optimizers.items():
@@ -110,7 +111,7 @@ class ExperimentSuite:
                 )
 
                 # Start the logger
-                logger.start(self._name, config)
+                logger.start(self._name, config, optimizer_name)
 
                 # Run the experiment
                 solution = run_experiment(
@@ -121,11 +122,12 @@ class ExperimentSuite:
                     logger,
                 )
 
-                logger.save_artifact(
-                    f"{self._benchmark.name}_{optimizer_name}_{seed}_solution",
-                    solution,
-                    type="solution",
-                )
+                if save_solution:
+                    logger.save_artifact(
+                        f"{self._benchmark.name}_{optimizer_name}_{seed}_solution",
+                        solution,
+                        type="solution",
+                    )
 
                 # Finish logging
                 logger.finish()

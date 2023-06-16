@@ -6,6 +6,7 @@ from abc import abstractmethod
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
+from beartype.typing import Optional
 from jaxtyping import PyTree
 from jaxtyping import jaxtyped
 
@@ -15,12 +16,15 @@ class Logger(ABC):
 
     @abstractmethod
     @beartype
-    def start(self, label: str, config: Dict[str, Any]) -> None:
+    def start(
+        self, benchmark: str, config: Dict[str, Any], group: Optional[str] = None
+    ) -> None:
         """Start logging.
 
         Args:
-            label: the name used to group similar experiments
+            benchmark: the name used to experiments on the same benchmark
             config: a dictionary of hyperparameters to save
+            group: the name of this group of experiments
         """
 
     @abstractmethod

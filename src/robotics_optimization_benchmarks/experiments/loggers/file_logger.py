@@ -9,6 +9,7 @@ from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
 from beartype.typing import List
+from beartype.typing import Optional
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import PyTree
@@ -39,16 +40,22 @@ class FileLogger(Logger):
         self._save_prefix = ""
 
     @beartype
-    def start(self, label: str, config: Dict[str, Any]) -> None:
+    def start(
+        self, benchmark: str, config: Dict[str, Any], group: Optional[str] = None
+    ) -> None:
         """Start logging.
 
         Args:
-            label: the name used to group similar experiments
+            benchmark: the name used to experiments on the same benchmark
             config: a dictionary of hyperparameters to save
+            group: the name of this group of experiments
         """
         # Create a subdirectory for these logs with a unique name
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        self._save_prefix = os.path.join(self._results_dir, label, timestamp)
+        if group is not None:
+            timestamp += "_" + group
+
+        self._save_prefix = os.path.join(self._results_dir, benchmark, timestamp)
         os.makedirs(self._save_prefix, exist_ok=True)
 
         # We're going to save things in memory in this list of log packets, then

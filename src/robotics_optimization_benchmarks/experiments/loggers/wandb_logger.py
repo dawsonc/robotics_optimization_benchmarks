@@ -2,6 +2,7 @@
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
+from beartype.typing import Optional
 from jaxtyping import PyTree
 from jaxtyping import jaxtyped
 
@@ -27,15 +28,18 @@ class WandbLogger(FileLogger):
         super().__init__(results_dir)
 
     @beartype
-    def start(self, label: str, config: Dict[str, Any]) -> None:
+    def start(
+        self, benchmark: str, config: Dict[str, Any], group: Optional[str] = None
+    ) -> None:
         """Start logging.
 
         Args:
-            label: the name used to group similar experiments
+            benchmark: the name used to experiments on the same benchmark
             config: a dictionary of hyperparameters to save
+            group: the name of this group of experiments
         """
-        super().start(label, config)
-        self._run = wandb.init(project=label, config=config)
+        super().start(benchmark, config, group)
+        self._run = wandb.init(project=benchmark, config=config, group=group)
 
     def finish(self) -> None:
         """Finish logging and save anything that needs to be persisted."""
@@ -67,6 +71,11 @@ class WandbLogger(FileLogger):
         Returns:
             the string identifier for the saved artifact
         """
+        # Strip out any spaces in the name
+        name = name.replace(" ", "_")
+        # Remove any characters that aren't alphanumeric, dashes, dots, or underscores
+        name = "".join(c for c in name if c.isalnum() or c in "-._")
+
         # Save the artifact to a local file
         save_path = super().save_artifact(name, data, type)
 
