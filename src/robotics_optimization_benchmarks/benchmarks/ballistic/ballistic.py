@@ -17,9 +17,10 @@ from robotics_optimization_benchmarks.types import PRNGKeyArray
 class Ballistic(Benchmark):
     """Define a benchmark for the ballistic trajectory optimization from Suh 2022.
 
-    In this benchmark, `dimension` balls are thrown over a wall. The objective is
-    to get the balls to land as far as possible. The decision variable includes the
-    launch angle for each ball.
+    In this benchmark, `dimension` balls are thrown through a gap in a wall.
+
+    The objective is to get the balls to land as far away as possible. The decision
+    variables are the launch angle for each ball.
 
     Attributes:
         dimension: The dimension of the problem.
@@ -30,7 +31,8 @@ class Ballistic(Benchmark):
     dimension: int
 
     _wall_x = 5.5  # m, x position of the wall
-    _wall_height = 2.0  # m, height of the wall
+    _gap_height = 2.0  # m, height of the wall
+    _gap_width = 1.0  # m, width of the gap
     _wall_width = 0.1  # m, thickness of the wall
 
     def __init__(self, dimension: int = 10):
@@ -106,7 +108,9 @@ class Ballistic(Benchmark):
             # Check for collisions
             wall_collision = jnp.logical_and(
                 jnp.abs(p_x - self._wall_x) <= self._wall_width / 2.0,
-                p_y <= self._wall_height,
+                jnp.logical_or(
+                    p_y <= self._gap_height, p_y >= self._gap_height + self._gap_width
+                ),
             )
             ground_collision = p_y <= 0.0
 
@@ -173,7 +177,14 @@ class Ballistic(Benchmark):
         axis.fill_between(
             [self._wall_x - self._wall_width / 2, self._wall_x + self._wall_width / 2],
             0.0,
-            self._wall_height,
+            self._gap_height,
+            color="black",
+            alpha=0.2,
+        )
+        axis.fill_between(
+            [self._wall_x - self._wall_width / 2, self._wall_x + self._wall_width / 2],
+            self._gap_height + self._gap_width,
+            10.0,
             color="black",
             alpha=0.2,
         )
@@ -181,3 +192,12 @@ class Ballistic(Benchmark):
         # Save the figure and clean up
         fig.savefig(save_to, format="png")
         plt.close(fig)
+
+
+if __name__ == "__main__":
+    # Plot the cost function in 1D
+    problem = Ballistic(dimension=1)
+    x = jnp.linspace(0.0, jnp.pi / 2, 1000).reshape(-1, 1)
+    y = jax.vmap(problem.evaluate_solution)(x)
+    plt.plot(x, y)
+    plt.show()
