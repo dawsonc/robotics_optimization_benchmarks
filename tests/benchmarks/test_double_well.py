@@ -5,7 +5,7 @@ import jax.random as jrandom
 import pytest
 
 from robotics_optimization_benchmarks.benchmarks import make
-from robotics_optimization_benchmarks.benchmarks.double_well import DoubleWell
+from robotics_optimization_benchmarks.benchmarks.nl_opt import DoubleWell
 
 
 dimensions_to_test = [1, 10, 100]

@@ -5,7 +5,7 @@ import pytest
 from chex import assert_trees_all_close
 from jax.config import config as jconfig
 
-from robotics_optimization_benchmarks.benchmarks.quadratic import Quadratic
+from robotics_optimization_benchmarks.benchmarks.nl_opt import Quadratic
 from robotics_optimization_benchmarks.optimizers import make
 
 
