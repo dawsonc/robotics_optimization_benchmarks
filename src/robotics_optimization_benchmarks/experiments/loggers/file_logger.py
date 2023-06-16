@@ -99,6 +99,9 @@ class FileLogger(Logger):
 
         Returns:
             the string identifier for the saved artifact
+
+        Raises:
+            RuntimeError: if the logger is not currently logging
         """
         # Only allow saving if logging is going on
         if self._save_prefix == "":

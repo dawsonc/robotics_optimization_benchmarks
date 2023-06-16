@@ -54,6 +54,9 @@ class Logger(ABC):
 
         Returns:
             the string identifier for the saved artifact
+
+        Raises:
+            RuntimeError: if the logger is not running
         """
 
     @abstractmethod
