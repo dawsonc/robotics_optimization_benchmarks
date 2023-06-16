@@ -1,15 +1,15 @@
-"""Run a suite of experiments on the ballistic example."""
+"""Run a suite of experiments on the quadratic example."""
 from robotics_optimization_benchmarks.experiments import experiment_suite_factory
 from robotics_optimization_benchmarks.experiments.loggers import WandbLogger
 
 
 if __name__ == "__main__":
-    # Create an experiment suite for the ballistic
+    # Create an experiment suite for the quadratic
     experiment_suite = experiment_suite_factory.create_experiment_suite(
-        name="ballistic_100",
-        description="Compare optimization and inference methods on the ballistic env.",
+        name="quadratic_100",
+        description="Compare optimization and inference methods on the quadratic env.",
         seeds=list(range(20)),
-        benchmark_name="ballistic",
+        benchmark_name="quadratic",
         benchmark_hparams={"dimension": 100},
         max_steps=50,
         optimizer_specs=[

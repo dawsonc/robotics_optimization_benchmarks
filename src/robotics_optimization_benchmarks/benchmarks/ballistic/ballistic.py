@@ -51,7 +51,7 @@ class Ballistic(Benchmark):
     def sample_initial_guess(self, key: PRNGKeyArray) -> Float[Array, " dimension"]:
         """Sample a random initial solution to the problem.
 
-        x_0 ~ N(0.1, 0.1 * I_{n x n})
+        x_0 ~ Uniform(0, pi/2)
 
         Args:
             key: a JAX PRNG key used to sample the solution.
@@ -59,7 +59,9 @@ class Ballistic(Benchmark):
         Returns:
             A random initial solution to the problem in R^{self.dimension}.
         """
-        return 0.1 * jax.random.normal(key, shape=(self.dimension,)) + 0.1
+        return jax.random.uniform(
+            key, shape=(self.dimension,), minval=0, maxval=jnp.pi / 2
+        )
 
     @jaxtyped
     @beartype

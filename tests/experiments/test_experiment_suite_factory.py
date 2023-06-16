@@ -1,14 +1,53 @@
 """Define tests for the experiment suite factory."""
-import json
-import pathlib
-
-import pandas as pd
 import pytest
+from jaxtyping import PyTree
 
 from robotics_optimization_benchmarks import experiment_suite_factory
+from robotics_optimization_benchmarks.experiments.loggers import Logger
 
 
-def test_experiment_suite_factory_user_story(tmpdir) -> None:
+# Make a mock logger
+class MockLogger(Logger):
+    """A mock logger."""
+
+    started: bool = False
+    finished: bool = False
+    config: dict
+    log_data: list
+    saved_artifacts: dict
+
+    def start(self, label: str, config: dict, group: str) -> None:
+        """Start the logger."""
+        self.started = True
+        self.config = config
+        self.log_data = []
+        self.saved_artifacts = {}
+
+    def finish(self) -> None:
+        """Finish the logger."""
+        self.finished = True
+
+    def log(self, data) -> None:
+        """Log data."""
+        self.log_data.append(data)
+
+    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
+        """Save an artifact."""
+        self.saved_artifacts[name] = data
+        return name
+
+    def load_artifact(self, artifact_path: str, example_pytree: PyTree) -> PyTree:
+        """Load an artifact (noop)."""
+
+
+# Make a fixture for a logger
+@pytest.fixture(name="logger")
+def fixture_file_logger(tmpdir):
+    """Create a file logger instance."""
+    return MockLogger()
+
+
+def test_experiment_suite_factory_user_story(logger) -> None:
     """Integration test: test creating and running an experiment suite.
 
     As a user, I want to run suites of multiple experiments to compare the performance
@@ -60,35 +99,17 @@ def test_experiment_suite_factory_user_story(tmpdir) -> None:
 
     # As a user, I want to run the experiment suite and save the results to a file, so
     # that I can analyze the results later and reproduce my results.
-    params_path, trace_paths, solution_paths = experiment_suite.run(
-        results_dir=tmpdir.strpath
-    )
-    # There should be files for:
-    # - a JSON that allows us to re-create the experiment suite
-    # - a CSV file for each optimizer that contains the progress of each optimizer
-    # - a binary eqx file for each optimizer and each seed that contains the solution
-    #   found by each optimizer
-    assert pathlib.Path(params_path).exists()
-    for trace_path in trace_paths:
-        assert pathlib.Path(trace_path).exists()
-    for solution_path in solution_paths:
-        assert pathlib.Path(solution_path).exists()
+    experiment_suite.run(logger, save_solution=True)
 
-    # Check the contents of the parameter file
-    with open(params_path, encoding="utf-8") as params_f:
-        params = json.load(params_f)
-        assert params == experiment_suite.to_dict()
+    # Make sure that the logger was started and finished
+    assert logger.started
+    assert logger.finished
 
-    # Can we create a new experiment suite from the params?
-    experiment_suite_2 = experiment_suite_factory.create_experiment_suite_from_file(
-        params_path
-    )
-    assert experiment_suite_2.to_dict() == experiment_suite.to_dict()
+    # We should have logged several packets
+    assert len(logger.log_data) > 1
 
-    # Check the contents of the CSV files
-    gd_df = pd.read_csv(trace_paths[0])
-    mala_df = pd.read_csv(trace_paths[1])
-    assert gd_df.columns.tolist() == mala_df.columns.tolist()
+    # We should have saved the artifact
+    assert len(logger.saved_artifacts) > 0
 
 
 def test_experiment_suite_factory_duplicate_optimizer_names() -> None:

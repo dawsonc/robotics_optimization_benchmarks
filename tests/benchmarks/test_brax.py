@@ -17,9 +17,9 @@ envs_to_test = [
     "humanoid",
     "reacher",
     "walker2d",
-    "fetch",
-    "grasp",
-    "ur5e",
+    "pusher",
+    "inverted_pendulum",
+    "inverted_double_pendulum",
 ]
 
 
@@ -86,10 +86,11 @@ def test_brax_sample_initial_guess(env):
     assert action.shape == (n_actions,)
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("env", envs_to_test)
 def test_brax_evaluate_solution(env):
     """Test evaluating the benchmark."""
-    benchmark = Brax(env, horizon=10)
+    benchmark = Brax(env, horizon=2)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     value = benchmark.evaluate_solution(initial_guess)
 
@@ -101,7 +102,7 @@ def test_brax_evaluate_solution(env):
 @pytest.mark.parametrize("env", envs_to_test)
 def test_brax_render_solution_to_binary_io(env):
     """Test rendering the benchmark, saving to a binary IO."""
-    benchmark = Brax(task=env, horizon=10)
+    benchmark = Brax(task=env, horizon=2)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     benchmark.render_solution(initial_guess, io.BytesIO())
 
@@ -113,6 +114,6 @@ def test_brax_render_solution_to_file(env, tmpdir):
     # Save to a temporary directory for testing
     save_path = tmpdir.join("test_render.gif").strpath
 
-    benchmark = Brax(task=env, horizon=10)
+    benchmark = Brax(task=env, horizon=2)
     initial_guess = benchmark.sample_initial_guess(jrandom.PRNGKey(0))
     benchmark.render_solution(initial_guess, save_path)

@@ -1,19 +1,14 @@
 """Define a class to setup and run suites of experiments."""
-import json
-import os
-
-import equinox as eqx
-import pandas as pd
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
 from beartype.typing import List
-from beartype.typing import Tuple
 
 from robotics_optimization_benchmarks.benchmarks import Benchmark
 from robotics_optimization_benchmarks.experiments.experiment_runner import (
     run_experiment,
 )
+from robotics_optimization_benchmarks.experiments.loggers import Logger
 from robotics_optimization_benchmarks.optimizers import Optimizer
 
 
@@ -91,59 +86,48 @@ class ExperimentSuite:
             ],
         }
 
-    def run(self, results_dir: str) -> Tuple[str, List[str], List[str]]:
+    def run(self, logger: Logger, save_solution: bool = False) -> None:
         """Run the experiment suite.
 
         Args:
-            results_dir: the directory to save the results to.
-
-        Returns:
-            The filename of the JSON file that contains the parameters of this suite.
-            A list of filenames that were created to store the optimizer traces.
-            A list of filenames that were created to store the solutions.
+            logger: the object to use to log the results
+            save_solution: whether to save the solution to the logger or not
         """
-        # Running the experiment suite has the following steps:
-        # 1. Make sure that a directory exists at the given path (create it if not).
-        # 2. Save the parameters of this experiment suite to a JSON file in the results
-        #    directory.
-        # 3. Run each optimizer for `max_steps` steps on the benchmark, restarting for
-        #    each seed.
-        # 4. Save the results of each optimizer to a CSV file in the results directory.
-
-        # Start by making sure the results directory exists.
-        os.makedirs(results_dir, exist_ok=True)
-
-        # Next, save any parameters we need for reproducibility (i.e. all kwargs for
-        # the experiment suite factory) to a JSON file in the results directory.
-        params_file_name = os.path.join(results_dir, "experiment_suite_params.json")
-        with open(params_file_name, "w", encoding="utf-8") as params_file:
-            json.dump(self.to_dict(), params_file)
-
-        # For each optimizer, run it on the benchmark for `max_steps` steps, repeating
-        # for each seed.
-        trace_file_names = []
-        solution_file_names = []
+        # Run each optimizer, logging the results as we go.
         for optimizer_name, optimizer in self._optimizers.items():
-            # Run on each seed and accumulate the results
-            optimizer_traces = []
+            # Run on each seed
             for seed in self._seeds:
-                optimizer_trace_df, solution = run_experiment(
-                    self._benchmark, optimizer, optimizer_name, seed, self._max_steps
+                # Assemble a dictionary of hyperparams
+                config = (
+                    self.to_dict()
+                    | {
+                        "benchmark_name": self._benchmark.name,
+                        "optimizer_name": optimizer_name,
+                        "seed": seed,
+                        "max_steps": self._max_steps,
+                    }
+                    | optimizer.to_dict()
+                    | self._benchmark.to_dict()
                 )
-                optimizer_traces.append(optimizer_trace_df)
 
-                # Save the solutions from each seed to a Equinox serialized file
-                solution_file_name = os.path.join(
-                    results_dir, f"{optimizer_name}_solution_{seed}.eqx"
+                # Start the logger
+                logger.start(self._name, config, optimizer_name)
+
+                # Run the experiment
+                solution = run_experiment(
+                    self._benchmark,
+                    optimizer,
+                    seed,
+                    self._max_steps,
+                    logger,
                 )
-                eqx.tree_serialise_leaves(solution_file_name, solution)
-                solution_file_names.append(solution_file_name)
 
-            # Concatenate the optimizer_traces from each seed into one DataFrame and
-            # save it to a CSV file in the optimizer_traces directory.
-            optimizer_traces = pd.concat(optimizer_traces, ignore_index=True)
-            trace_file_name = os.path.join(results_dir, f"{optimizer_name}_trace.csv")
-            optimizer_traces.to_csv(trace_file_name, index=False)
-            trace_file_names.append(trace_file_name)
+                if save_solution:
+                    logger.save_artifact(
+                        f"{self._benchmark.name}_{optimizer_name}_{seed}_solution",
+                        solution,
+                        type="solution",
+                    )
 
-        return params_file_name, trace_file_names, solution_file_names
+                # Finish logging
+                logger.finish()

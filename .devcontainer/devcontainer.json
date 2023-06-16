@@ -10,6 +10,10 @@
   // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "pipx install poetry && pipx install nox && pipx inject nox nox-poetry && poetry install && nox -s pre-commit -- install",
+  // Set environment variables
+  "containerEnv": {
+    "WANDB_API_KEY": "${localEnv:WANDB_API_KEY}"
+  },
   // Configure tool-specific properties.
   "customizations": {
     // Configure properties specific to VS Code.

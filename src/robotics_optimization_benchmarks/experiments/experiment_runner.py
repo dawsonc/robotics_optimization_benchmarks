@@ -1,52 +1,34 @@
 """Define functions to run a single experiment."""
-import time
-
 import jax
 import jax.random as jrandom
-import jax.tree_util as jtu
-import pandas as pd
 from beartype import beartype
-from beartype.typing import Tuple
 
 from robotics_optimization_benchmarks.benchmarks import Benchmark
+from robotics_optimization_benchmarks.experiments.loggers import Logger
 from robotics_optimization_benchmarks.optimizers import Optimizer
 from robotics_optimization_benchmarks.types import DecisionVariable
-
-
-# Start by defining some useful functions for running experiments.
-
-
-def _wrap_for_scan(step_function):
-    """Make an optimizer step function compatible with `jax.lax.scan`."""  # noqa: D202
-
-    # scan expects the function to return a tuple of (output, carry), both of which
-    # are the same in this case.
-    def wrapped(state, step_key):
-        next_state = step_function(state, step_key)
-        return next_state, next_state
-
-    return wrapped
 
 
 @beartype
 def run_experiment(
     benchmark: Benchmark,
     optimizer: Optimizer,
-    optimizer_name: str,
     seed: int,
     max_steps: int,
-) -> Tuple[pd.DataFrame, DecisionVariable]:
+    logger: Logger,
+) -> DecisionVariable:
     """Run the given optimizer on the given benchmark, starting with the given seed.
+
+    Logs results to WandB
 
     Args:
         benchmark: the benchmark to run the optimizer on.
         optimizer: the optimizer to run on the benchmark.
-        optimizer_name: the name of the optimizer to use in the output dataframe.
         seed: the random seed to use for the experiment.
         max_steps: the maximum number of steps to run the optimizer for.
+        logger: the object to use to log the results
 
     Returns:
-        - A dataframe of the optimization history
         - The solution found by the optimizer.
     """
     # Get a JAX random key from the given seed and split it for use in initialization
@@ -54,48 +36,34 @@ def run_experiment(
     init_key, opt_key = jrandom.split(jrandom.PRNGKey(seed))
 
     # Sample an initial state and initialize the optimizer
-    initial_opt_state, step_fn = optimizer.make_step(
+    opt_state, step_fn = optimizer.make_step(
         benchmark.evaluate_solution, benchmark.sample_initial_guess(init_key)
     )
+    best_objective = opt_state.objective_value
+
+    # Log initial data
+    log_packet = {
+        "Cumulative objective calls": opt_state.cumulative_function_calls,
+        "Objective": opt_state.objective_value,
+        "Best objective": best_objective,
+    }
+    logger.log(log_packet)
 
     # Run the optimizer starting from this seed, which gives us a trace of solutions and
-    # objectives for each step. Make sure to record the time this takes!
-    start = time.perf_counter()
-    _, states = jax.lax.scan(
-        jax.jit(_wrap_for_scan(step_fn)),
-        initial_opt_state,
-        jrandom.split(opt_key, max_steps),
-    )
-    end = time.perf_counter()
-    total_time = end - start
+    # objectives for each step.
+    for key in jrandom.split(opt_key, max_steps):
+        opt_state = jax.jit(step_fn)(opt_state, key)
 
-    # Format the optimizer progress into a dataframe
-    optimizer_trace_df = pd.DataFrame(
-        {
-            "Algorithm": optimizer_name,
-            "Optimizer type": optimizer.name,
-            "Seed": seed,
-            "Steps": range(1, max_steps + 1),
-            "Cumulative objective calls": states.cumulative_function_calls,
-            "Objective": states.objective_value,
-            "Best objective": jax.lax.cummin(states.objective_value),
-            "Avg. time per step (s)": total_time / max_steps,
+        # Update the best solution found
+        best_objective = min(best_objective, opt_state.objective_value)
+
+        # Log the data from this step
+        log_packet = {
+            "Cumulative objective calls": opt_state.cumulative_function_calls,
+            "Objective": opt_state.objective_value,
+            "Best objective": best_objective,
         }
-    )
+        logger.log(log_packet)
 
-    # Add an entry for the initial state
-    optimizer_trace_df.loc[len(optimizer_trace_df.index)] = {
-        "Algorithm": optimizer_name,
-        "Optimizer type": optimizer.name,
-        "Seed": seed,
-        "Steps": 0,
-        "Cumulative objective calls": 0,
-        "Objective": initial_opt_state.objective_value,
-        "Best objective": initial_opt_state.objective_value,
-        "Avg. time per step (s)": total_time / max_steps,
-    }
-
-    # Extract the solution at the last step
-    solution = jtu.tree_map(lambda x: x[-1], states.solution)
-
-    return optimizer_trace_df, solution
+    # Return the logs and solution
+    return opt_state.solution
