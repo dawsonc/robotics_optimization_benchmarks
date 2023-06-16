@@ -16,7 +16,7 @@ class MockLogger(Logger):
     log_data: list
     saved_artifacts: dict
 
-    def start(self, label: str, config: dict) -> None:
+    def start(self, label: str, config: dict, group: str) -> None:
         """Start the logger."""
         self.started = True
         self.config = config

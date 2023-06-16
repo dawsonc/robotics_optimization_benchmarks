@@ -239,7 +239,7 @@ class Brax(Benchmark):
         # Render, which yields the bytes of a GIF animation, which we have to handle
         # differently depending on whether we're saving to a file or a file-like
         render_bytes = brax.io.image.render(
-            self._env.sys, [s.qp for s in rollout], width=1280, height=960
+            self._env.sys, [s.pipeline_state for s in rollout], width=1280, height=960
         )
         if isinstance(save_to, str):
             with open(save_to, "wb") as file:
