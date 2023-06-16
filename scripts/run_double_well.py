@@ -6,24 +6,33 @@ from robotics_optimization_benchmarks.experiments.loggers import WandbLogger
 if __name__ == "__main__":
     # Create an experiment suite for the double well
     experiment_suite = experiment_suite_factory.create_experiment_suite(
-        name="double_well",
+        name="double_well_100",
         description="Compare optimization and inference methods on the double-well.",
-        seeds=[0, 1, 2, 3],
+        seeds=list(range(20)),
         benchmark_name="double_well",
-        benchmark_hparams={"dimension": 1},
+        benchmark_hparams={"dimension": 100},
         max_steps=50,
         optimizer_specs=[
             {
                 "name": "Gradient-based optimization",  # a name to label this optimizer
                 "type": "GD",  # what type of optimizer is this? should match registry
-                "hparams": {"step_size": 0.02},
+                "hparams": {"step_size": 1e-2},
             },
             {
                 "name": "Gradient-based inference",
                 "type": "MCMC",
                 "hparams": {
-                    "step_size": 0.02,
+                    "step_size": 1e-2,
                     "use_gradients": True,
+                    "use_metropolis": True,
+                },
+            },
+            {
+                "name": "Gradient-free inference",
+                "type": "MCMC",
+                "hparams": {
+                    "step_size": 1e-2,
+                    "use_gradients": False,
                     "use_metropolis": True,
                 },
             },
