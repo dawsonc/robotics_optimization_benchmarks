@@ -5,6 +5,9 @@ from robotics_optimization_benchmarks.benchmarks.nl_opt.double_well import Doubl
 from robotics_optimization_benchmarks.benchmarks.nl_opt.himmelblau import Himmelblau
 from robotics_optimization_benchmarks.benchmarks.nl_opt.quadratic import Quadratic
 from robotics_optimization_benchmarks.benchmarks.nl_opt.rosenbrock import Rosenbrock
+from robotics_optimization_benchmarks.benchmarks.nl_opt.three_hump_camel import (
+    ThreeHumpCamel,
+)
 
 
 __all__ = [
@@ -13,4 +16,5 @@ __all__ = [
     "Himmelblau",
     "Quadratic",
     "Rosenbrock",
+    "ThreeHumpCamel",
 ]
