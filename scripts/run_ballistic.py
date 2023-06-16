@@ -17,11 +17,11 @@ if __name__ == "__main__":
 
     # Create an experiment suite for the ballistic
     experiment_suite = experiment_suite_factory.create_experiment_suite(
-        name="ballistic_1_nogap",
+        name="ballistic_10",
         description="Compare optimization and inference methods on the ballistic env.",
         seeds=list(range(args.start_seed, args.end_seed)),
         benchmark_name="ballistic",
-        benchmark_hparams={"dimension": 1},
+        benchmark_hparams={"dimension": 10},
         max_steps=50,
         optimizer_specs=[
             {
