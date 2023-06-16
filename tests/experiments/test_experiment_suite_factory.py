@@ -99,7 +99,7 @@ def test_experiment_suite_factory_user_story(logger) -> None:
 
     # As a user, I want to run the experiment suite and save the results to a file, so
     # that I can analyze the results later and reproduce my results.
-    experiment_suite.run(logger, save_artifacts=True)
+    experiment_suite.run(logger, save_solution=True)
 
     # Make sure that the logger was started and finished
     assert logger.started
