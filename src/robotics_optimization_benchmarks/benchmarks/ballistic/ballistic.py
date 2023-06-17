@@ -24,29 +24,40 @@ class Ballistic(Benchmark):
 
     Attributes:
         dimension: The dimension of the problem.
+        gap: If true, there is a lower and upper wall with a small gap in between.
+            If false, there is only a lower wall.
     """
 
     _name: str = "ballistic"
 
     dimension: int
+    gap: bool
 
     _wall_x = 5.5  # m, x position of the wall
     _gap_height = 2.0  # m, height of the wall
     _gap_width = 1.0  # m, width of the gap
     _wall_width = 0.1  # m, thickness of the wall
 
-    def __init__(self, dimension: int = 10):
+    def __init__(self, dimension: int = 10, gap: bool = True):
         """Initialize the benchmark.
 
         Args:
             dimension: The dimension of the problem.
+            gap: whether or not to include a gap in the wall, or just have open space
+                above a lower wall.
         """
         self.dimension = dimension
+        self.gap = gap
+
+        # If there is no gap, adjust the gap width to be so large that the upper wall
+        # isn't relevant
+        if not self.gap:
+            self._gap_width = 1e2
 
     @beartype
     def to_dict(self) -> Dict[str, Any]:
         """Get a dictionary containing the parameters to initialize the benchmark."""
-        return {"dimension": self.dimension}
+        return {"dimension": self.dimension, "gap": self.gap}
 
     @jaxtyped
     @beartype
