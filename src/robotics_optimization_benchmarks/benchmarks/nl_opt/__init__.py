@@ -2,6 +2,7 @@
 
 from robotics_optimization_benchmarks.benchmarks.nl_opt.ackley import Ackley
 from robotics_optimization_benchmarks.benchmarks.nl_opt.double_well import DoubleWell
+from robotics_optimization_benchmarks.benchmarks.nl_opt.heaviside import Heaviside
 from robotics_optimization_benchmarks.benchmarks.nl_opt.himmelblau import Himmelblau
 from robotics_optimization_benchmarks.benchmarks.nl_opt.quadratic import Quadratic
 from robotics_optimization_benchmarks.benchmarks.nl_opt.rosenbrock import Rosenbrock
@@ -16,6 +17,7 @@ from robotics_optimization_benchmarks.benchmarks.nl_opt.three_hump_camel import 
 __all__ = [
     "Ackley",
     "DoubleWell",
+    "Heaviside",
     "Himmelblau",
     "Quadratic",
     "Rosenbrock",
