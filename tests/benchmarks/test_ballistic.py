@@ -24,11 +24,16 @@ def test_ballistic_init(dimension: int):
     assert benchmark.dimension == dimension
     assert benchmark.name == "ballistic"
 
+    # Also test with no gap
+    benchmark = Ballistic(dimension=dimension, gap=False)
+    assert benchmark.dimension == dimension
+    assert benchmark.name == "ballistic"
+
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
 def test_ballistic_from_dict(dimension: int):
     """Test creating a ballistic benchmark from a dictionary."""
-    benchmark = Ballistic.from_dict({"dimension": dimension})
+    benchmark = Ballistic.from_dict({"dimension": dimension, "gap": True})
     assert benchmark.dimension == dimension
     assert benchmark.name == "ballistic"
 
@@ -37,7 +42,7 @@ def test_ballistic_from_dict(dimension: int):
 def test_ballistic_to_dict(dimension: int):
     """Test ballistic benchmark to dict."""
     benchmark = Ballistic(dimension=dimension)
-    assert benchmark.to_dict() == {"dimension": dimension}
+    assert benchmark.to_dict() == {"dimension": dimension, "gap": True}
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
