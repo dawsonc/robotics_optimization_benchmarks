@@ -203,12 +203,3 @@ class Ballistic(Benchmark):
         # Save the figure and clean up
         fig.savefig(save_to, format="png")
         plt.close(fig)
-
-
-if __name__ == "__main__":
-    # Plot the cost function in 1D
-    problem = Ballistic(dimension=1)
-    x = jnp.linspace(0.0, jnp.pi / 2, 1000).reshape(-1, 1)
-    y = jax.vmap(problem.evaluate_solution)(x)
-    plt.plot(x, y)
-    plt.show()
