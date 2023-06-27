@@ -3,6 +3,7 @@
 from abc import ABC
 from abc import abstractmethod
 
+import pandas as pd
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
@@ -39,6 +40,18 @@ class Logger(ABC):
 
         Args:
             data: a dictionary of data to log, in the form of JAX scalars.
+        """
+
+    @abstractmethod
+    @beartype
+    @jaxtyped
+    def get_logs(self) -> pd.DataFrame:
+        """Get the logged data as a single pandas dataframe.
+
+        Returns:
+            All of the logged data consolidated into a single pandas dataframe,
+            using the tidy data format to include all config information in the
+            dataframe.
         """
 
     @abstractmethod
