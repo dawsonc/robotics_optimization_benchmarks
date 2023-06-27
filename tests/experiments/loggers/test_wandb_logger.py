@@ -3,6 +3,7 @@ import os
 import pathlib
 
 import jax.numpy as jnp
+import pandas as pd
 import pytest
 
 from robotics_optimization_benchmarks.experiments.loggers.wandb_logger import (
@@ -29,6 +30,11 @@ def test_wandb_logger(tmpdir) -> None:
     assert len(list(pathlib.Path(save_dir).glob("**/*.json"))) == 1  # hyperparameters
     assert len(list(pathlib.Path(save_dir).glob("**/*.csv"))) == 1  # logs
 
+    # Check that we can retrieve the logs
+    logs = logger.get_logs()
+    assert isinstance(logs, pd.DataFrame)
+    assert len(logs["learning_rate"].unique()) == 1
+
 
 def test_wandb_logger_multiple_runs(tmpdir) -> None:
     """Test that we can log data to a file."""
@@ -46,7 +52,7 @@ def test_wandb_logger_multiple_runs(tmpdir) -> None:
     logger.finish()
 
     # Start logging again and log a few data packets
-    logger.start("test2", {"learning_rate": 1e-3})
+    logger.start("test2", {"learning_rate": 1e-2})
     for i in range(10):
         logger.log({"a number": i})
     logger.finish()
@@ -54,6 +60,11 @@ def test_wandb_logger_multiple_runs(tmpdir) -> None:
     # Check that the hyperparameters and log files got saved
     assert len(list(pathlib.Path(save_dir).glob("**/*.json"))) == 2  # hyperparameters
     assert len(list(pathlib.Path(save_dir).glob("**/*.csv"))) == 2  # logs
+
+    # Check that we can retrieve the logs
+    logs = logger.get_logs()
+    assert isinstance(logs, pd.DataFrame)
+    assert len(logs["learning_rate"].unique()) == 2
 
 
 def test_wandb_logger_save_and_load_artifact(tmpdir) -> None:
