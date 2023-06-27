@@ -60,7 +60,7 @@ class WandbLogger(FileLogger):
 
     @beartype
     @jaxtyped
-    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
+    def save_artifact(self, name: str, data: PyTree, log_type: str = "generic") -> str:
         """Save an artifact to the logger.
 
         Args:

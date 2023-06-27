@@ -31,7 +31,7 @@ class MockLogger(Logger):
         """Log data."""
         self.log_data.append(data)
 
-    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
+    def save_artifact(self, name: str, data: PyTree, log_type: str = "generic") -> str:
         """Save an artifact."""
         self.saved_artifacts[name] = data
         return name
