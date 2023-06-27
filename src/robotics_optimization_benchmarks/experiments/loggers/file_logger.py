@@ -145,7 +145,7 @@ class FileLogger(Logger):
         Args:
             name: the name of the artifact
             data: the data to save
-            type: the type of artifact to save
+            log_type: the type of artifact to save
 
         Returns:
             the string identifier for the saved artifact

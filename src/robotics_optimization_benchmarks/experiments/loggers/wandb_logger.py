@@ -66,7 +66,7 @@ class WandbLogger(FileLogger):
         Args:
             name: the name of the artifact
             data: the data to save
-            type: the type of the artifact
+            log_type: the type of the artifact
 
         Returns:
             the string identifier for the saved artifact
