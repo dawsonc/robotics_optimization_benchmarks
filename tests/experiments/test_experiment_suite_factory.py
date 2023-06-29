@@ -29,7 +29,9 @@ class MockLogger(Logger):
 
     def log(self, data) -> None:
         """Log data."""
+        print(f"Logging {data}...")
         self.log_data.append(data)
+        print(len(self.log_data))
 
     def save_artifact(self, name: str, data: PyTree, log_type: str = "generic") -> str:
         """Save an artifact."""
@@ -105,9 +107,11 @@ def test_experiment_suite_factory_user_story(save_artifacts, logger) -> None:
     # I want to be able to run these experiments without saving the solution
     experiment_suite.run(logger, save_solution=save_artifacts)
 
-    # We should have logged some data packets but no artifacts
+    # We should have logged some data packets
     assert len(logger.log_data) > 1
-    assert len(logger.saved_artifacts) == 0
+
+    # Whether or not we saved artifacts depends on the parameterized flag
+    assert len(logger.saved_artifacts) == (1 if save_artifacts else 0)
 
     # Make sure that the logger was started and finished
     assert logger.started
