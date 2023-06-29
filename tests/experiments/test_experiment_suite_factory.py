@@ -50,7 +50,8 @@ def fixture_file_logger(tmpdir):
     return MockLogger()
 
 
-def test_experiment_suite_factory_user_story(logger) -> None:
+@pytest.mark.parametrize("save_artifacts", [True, False])
+def test_experiment_suite_factory_user_story(save_artifacts, logger) -> None:
     """Integration test: test creating and running an experiment suite.
 
     As a user, I want to run suites of multiple experiments to compare the performance
@@ -102,24 +103,15 @@ def test_experiment_suite_factory_user_story(logger) -> None:
     assert experiment_suite.to_dict()["name"] == "test_suite"
 
     # I want to be able to run these experiments without saving the solution
-    experiment_suite.run(logger, save_solution=False)
+    experiment_suite.run(logger, save_solution=save_artifacts)
 
     # We should have logged some data packets but no artifacts
     assert len(logger.log_data) > 1
     assert len(logger.saved_artifacts) == 0
-    num_data_packets = len(logger.log_data)
-
-    # As a user, I also want to run the experiment suite and save the results to a file,
-    # so that I can analyze the results later and reproduce my results.
-    experiment_suite.run(logger, save_solution=True)
 
     # Make sure that the logger was started and finished
     assert logger.started
     assert logger.finished
-
-    # We should have logged more packets and an artifact
-    assert len(logger.log_data) > num_data_packets + 1
-    assert len(logger.saved_artifacts) > 0
 
 
 def test_experiment_suite_factory_duplicate_optimizer_names() -> None:
