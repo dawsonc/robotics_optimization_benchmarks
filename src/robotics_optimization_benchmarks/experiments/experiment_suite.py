@@ -128,7 +128,7 @@ class ExperimentSuite:
                     logger.save_artifact(
                         f"{self._benchmark.name}_{optimizer_name}_{seed}_solution",
                         solution,
-                        type="solution",
+                        log_type="solution",
                     )
 
                 # Finish logging
