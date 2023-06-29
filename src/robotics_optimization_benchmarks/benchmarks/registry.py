@@ -14,6 +14,7 @@ from robotics_optimization_benchmarks.benchmarks.nl_opt import Quadratic
 from robotics_optimization_benchmarks.benchmarks.nl_opt import Rosenbrock
 from robotics_optimization_benchmarks.benchmarks.nl_opt import StyblinskiTang
 from robotics_optimization_benchmarks.benchmarks.nl_opt import ThreeHumpCamel
+from robotics_optimization_benchmarks.benchmarks.pong import Pong
 
 
 # Make a registry to store the benchmarks
@@ -67,7 +68,9 @@ def register(name: str, benchmark: Type[Benchmark]) -> None:
 # Register built-in benchmarks
 ###############################################################################
 
+# Contact problems
 register(Ballistic.name, Ballistic)
+register(Pong.name, Pong)
 register(Brax.name, Brax)
 
 # Nonlinear optimization test functions
