@@ -31,6 +31,28 @@ def test_file_logger(tmpdir) -> None:
     assert len(logs["learning_rate"].unique()) == 1
 
 
+def test_file_logger_with_group(tmpdir) -> None:
+    """Test that we can log data to a file."""
+    # Set up a logger
+    save_dir = os.path.join(tmpdir, "results")
+    logger = FileLogger(save_dir)
+
+    # Start logging and log a few data packets
+    logger.start("test", {"learning_rate": 1e-3}, group="test_group")
+    for i in range(10):
+        logger.log({"a number": i})
+    logger.finish()
+
+    # Check that the hyperparameters and log files got saved
+    assert len(list(pathlib.Path(save_dir).glob("**/*.json"))) == 1  # hyperparameters
+    assert len(list(pathlib.Path(save_dir).glob("**/*.csv"))) == 1  # logs
+
+    # Check that we can retrieve the logs
+    logs = logger.get_logs()
+    assert isinstance(logs, pd.DataFrame)
+    assert len(logs["learning_rate"].unique()) == 1
+
+
 def test_file_logger_multiple_runs(tmpdir) -> None:
     """Test that we can log data to a file."""
     # Set up a logger
