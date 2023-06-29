@@ -53,7 +53,7 @@ class Pong(Benchmark):
 
     @jaxtyped
     @beartype
-    def sample_initial_guess(self, key: PRNGKeyArray) -> Float[Array, " dimension"]:
+    def sample_initial_guess(self, key: PRNGKeyArray) -> Float[Array, "dimension 3"]:
         """Sample a random initial solution to the problem.
 
         x ~ Uniform(-1, 1)
@@ -167,7 +167,7 @@ class Pong(Benchmark):
     @jaxtyped
     @beartype
     def evaluate_solution(
-        self, solution: Float[Array, " dimension"]
+        self, solution: Float[Array, "dimension 3"]
     ) -> Float[Array, ""]:
         """Evaluate the objective function at a given solution.
 
@@ -183,7 +183,7 @@ class Pong(Benchmark):
         return jnp.sum((final_x - self.goal_x) ** 2 + (final_y - self.goal_y) ** 2)
 
     def render_solution(
-        self, solution: Float[Array, " dimension"], save_to: str | BinaryIO
+        self, solution: Float[Array, "dimension 3"], save_to: str | BinaryIO
     ) -> None:
         """Visualize a solution to the problem, saving the visualization.
 
