@@ -39,6 +39,9 @@ class MockLogger(Logger):
     def load_artifact(self, artifact_path: str, example_pytree: PyTree) -> PyTree:
         """Load an artifact (noop)."""
 
+    def get_logs(self):
+        """Get the logs."""
+
 
 # Make a fixture for a logger
 @pytest.fixture(name="logger")
