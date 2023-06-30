@@ -1,0 +1,24 @@
+{
+  "name": "test_suite",
+  "description": "Test suite for integration tests.",
+  "seeds": [0, 1, 2],
+  "max_steps": 100,
+  "benchmark_name": "quadratic",
+  "benchmark_hparams": { "dimension": 10 },
+  "optimizer_specs": [
+    {
+      "name": "GradientDescent_1",
+      "type": "GD",
+      "hparams": { "step_size": 0.01 }
+    },
+    {
+      "name": "MALA_1",
+      "type": "MCMC",
+      "hparams": {
+        "use_gradients": true,
+        "use_metropolis": true,
+        "step_size": 0.01
+      }
+    }
+  ]
+}

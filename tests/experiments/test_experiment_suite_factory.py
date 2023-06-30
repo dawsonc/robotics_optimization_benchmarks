@@ -100,6 +100,13 @@ def test_experiment_suite_factory_user_story(save_artifacts, logger) -> None:
         ],
     )
 
+    import json
+
+    with open(
+        "tests/experiments/test_data/experiment_suite.json", "w", encoding="utf-8"
+    ) as params_file:
+        json.dump(experiment_suite.to_dict(), params_file)
+
     # Make sure that initialization took place
     assert experiment_suite is not None
     assert experiment_suite.to_dict()["name"] == "test_suite"
@@ -141,3 +148,12 @@ def test_experiment_suite_factory_duplicate_optimizer_names() -> None:
                 },
             ],
         )
+
+
+def test_experiment_suite_factory_from_file() -> None:
+    """Test that we can create an experiment suite from a file."""
+    experiment_suite = experiment_suite_factory.create_experiment_suite_from_file(
+        "tests/experiments/test_data/experiment_suite.json"
+    )
+    assert experiment_suite is not None
+    assert experiment_suite.to_dict()["name"] == "test_suite"
