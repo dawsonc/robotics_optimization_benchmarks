@@ -1,4 +1,5 @@
 """Define a class to setup and run suites of experiments."""
+import tqdm
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
@@ -96,11 +97,12 @@ class ExperimentSuite:
         # Run each optimizer, logging the results as we go.
         for optimizer_name, optimizer in self._optimizers.items():
             # Run on each seed
-            for seed in self._seeds:
+            print(f"Running {optimizer_name}...")
+            for seed in tqdm.tqdm(self._seeds):
                 # Assemble a dictionary of hyperparams
                 config = (
-                    self.to_dict()
-                    | {
+                    {
+                        "experiment_name": self._name,
                         "benchmark_name": self._benchmark.name,
                         "optimizer_name": optimizer_name,
                         "seed": seed,
@@ -126,7 +128,7 @@ class ExperimentSuite:
                     logger.save_artifact(
                         f"{self._benchmark.name}_{optimizer_name}_{seed}_solution",
                         solution,
-                        type="solution",
+                        log_type="solution",
                     )
 
                 # Finish logging

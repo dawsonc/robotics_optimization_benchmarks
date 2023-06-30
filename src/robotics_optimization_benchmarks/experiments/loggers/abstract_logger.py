@@ -3,6 +3,7 @@
 from abc import ABC
 from abc import abstractmethod
 
+import pandas as pd
 from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import Dict
@@ -44,13 +45,25 @@ class Logger(ABC):
     @abstractmethod
     @beartype
     @jaxtyped
-    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
+    def get_logs(self) -> pd.DataFrame:
+        """Get the logged data as a single pandas dataframe.
+
+        Returns:
+            All of the logged data consolidated into a single pandas dataframe,
+            using the tidy data format to include all config information in the
+            dataframe.
+        """
+
+    @abstractmethod
+    @beartype
+    @jaxtyped
+    def save_artifact(self, name: str, data: PyTree, log_type: str = "generic") -> str:
         """Save an artifact to the logger.
 
         Args:
             name: the name of the artifact
             data: the data to save
-            type: the type of the artifact
+            log_type: the type of the artifact
 
         Returns:
             the string identifier for the saved artifact

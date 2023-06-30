@@ -29,15 +29,20 @@ class MockLogger(Logger):
 
     def log(self, data) -> None:
         """Log data."""
+        print(f"Logging {data}...")
         self.log_data.append(data)
+        print(len(self.log_data))
 
-    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
+    def save_artifact(self, name: str, data: PyTree, log_type: str = "generic") -> str:
         """Save an artifact."""
         self.saved_artifacts[name] = data
         return name
 
     def load_artifact(self, artifact_path: str, example_pytree: PyTree) -> PyTree:
         """Load an artifact (noop)."""
+
+    def get_logs(self):
+        """Get the logs."""
 
 
 # Make a fixture for a logger
@@ -47,7 +52,8 @@ def fixture_file_logger(tmpdir):
     return MockLogger()
 
 
-def test_experiment_suite_factory_user_story(logger) -> None:
+@pytest.mark.parametrize("save_artifacts", [True, False])
+def test_experiment_suite_factory_user_story(save_artifacts, logger) -> None:
     """Integration test: test creating and running an experiment suite.
 
     As a user, I want to run suites of multiple experiments to compare the performance
@@ -94,22 +100,29 @@ def test_experiment_suite_factory_user_story(logger) -> None:
         ],
     )
 
+    import json
+
+    with open(
+        "tests/experiments/test_data/experiment_suite.json", "w", encoding="utf-8"
+    ) as params_file:
+        json.dump(experiment_suite.to_dict(), params_file)
+
     # Make sure that initialization took place
     assert experiment_suite is not None
+    assert experiment_suite.to_dict()["name"] == "test_suite"
 
-    # As a user, I want to run the experiment suite and save the results to a file, so
-    # that I can analyze the results later and reproduce my results.
-    experiment_suite.run(logger, save_solution=True)
+    # I want to be able to run these experiments without saving the solution
+    experiment_suite.run(logger, save_solution=save_artifacts)
+
+    # We should have logged some data packets
+    assert len(logger.log_data) > 1
+
+    # Whether or not we saved artifacts depends on the parameterized flag
+    assert len(logger.saved_artifacts) == (1 if save_artifacts else 0)
 
     # Make sure that the logger was started and finished
     assert logger.started
     assert logger.finished
-
-    # We should have logged several packets
-    assert len(logger.log_data) > 1
-
-    # We should have saved the artifact
-    assert len(logger.saved_artifacts) > 0
 
 
 def test_experiment_suite_factory_duplicate_optimizer_names() -> None:
@@ -135,3 +148,12 @@ def test_experiment_suite_factory_duplicate_optimizer_names() -> None:
                 },
             ],
         )
+
+
+def test_experiment_suite_factory_from_file() -> None:
+    """Test that we can create an experiment suite from a file."""
+    experiment_suite = experiment_suite_factory.create_experiment_suite_from_file(
+        "tests/experiments/test_data/experiment_suite.json"
+    )
+    assert experiment_suite is not None
+    assert experiment_suite.to_dict()["name"] == "test_suite"

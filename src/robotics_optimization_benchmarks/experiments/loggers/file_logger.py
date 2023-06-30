@@ -51,7 +51,7 @@ class FileLogger(Logger):
             group: the name of this group of experiments
         """
         # Create a subdirectory for these logs with a unique name
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.%f")
         if group is not None:
             timestamp += "_" + group
 
@@ -89,13 +89,63 @@ class FileLogger(Logger):
 
     @beartype
     @jaxtyped
-    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
+    def get_logs(self) -> pd.DataFrame:
+        """Get the logged data as a single pandas dataframe.
+
+        Returns:
+            All of the logged data consolidated into a single pandas dataframe,
+            using the tidy data format to include all config information in the
+            dataframe.
+        """
+        # All of the log and config files are saved as csv and json files in the sub-sub
+        # directories of the results directory. We need to find all of these directories
+        # and load the data from them.
+        log_dirs = []
+        for root, _, files in os.walk(self._results_dir):
+            # Check if this directory contains a log.csv file
+            if "log.csv" in files:
+                log_dirs.append(root)
+
+        # Load the data and config from each directory
+        logs = []
+        for log_dir in log_dirs:
+            log_file = os.path.join(log_dir, "log.csv")
+            config_file = os.path.join(log_dir, "config.json")
+
+            # Load the config
+            with open(config_file, encoding="utf-8") as config_file:
+                config = json.load(config_file)
+
+            # Load the log
+            log = pd.read_csv(log_file)
+
+            # Flatten the config in case it contains nested dicts, then convert to a
+            # dataframe with the same shape as logs, so that we can add the config info
+            # to each row of the logs
+            config = pd.json_normalize(config)
+            config = config.loc[config.index.repeat(log.shape[0])]
+            config = config.reset_index(drop=True)
+
+            # Add the config to the log
+            log = pd.concat([log, config], axis=1)
+
+            # Add the log to the list of logs
+            logs.append(log)
+
+        # Concatenate all of the logs into a single dataframe
+        logs = pd.concat(logs, axis=0)
+
+        return logs
+
+    @beartype
+    @jaxtyped
+    def save_artifact(self, name: str, data: PyTree, log_type: str = "generic") -> str:
         """Save an artifact to the logger.
 
         Args:
             name: the name of the artifact
             data: the data to save
-            type: the type of artifact to save
+            log_type: the type of artifact to save
 
         Returns:
             the string identifier for the saved artifact

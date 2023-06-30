@@ -60,13 +60,13 @@ class WandbLogger(FileLogger):
 
     @beartype
     @jaxtyped
-    def save_artifact(self, name: str, data: PyTree, type: str = "generic") -> str:
+    def save_artifact(self, name: str, data: PyTree, log_type: str = "generic") -> str:
         """Save an artifact to the logger.
 
         Args:
             name: the name of the artifact
             data: the data to save
-            type: the type of the artifact
+            log_type: the type of the artifact
 
         Returns:
             the string identifier for the saved artifact
@@ -77,10 +77,10 @@ class WandbLogger(FileLogger):
         name = "".join(c for c in name if c.isalnum() or c in "-._")
 
         # Save the artifact to a local file
-        save_path = super().save_artifact(name, data, type)
+        save_path = super().save_artifact(name, data, log_type)
 
         # Upload that file to WandB
-        artifact = wandb.Artifact(name=name, type=type)
+        artifact = wandb.Artifact(name=name, type=log_type)
         artifact.add_file(save_path)
         self._run.log_artifact(artifact)
 
