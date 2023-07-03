@@ -29,7 +29,6 @@ class MCMCOptimizerState(OptimizerState):
     Attributes:
         solution: the current solution.
         cumulative_objective_calls: the cumulative number of objective function calls.
-        cumulative_gradient_calls: the cumulative number of evaluations of the gradient
         logdensity: the negative of the objective value at the current solution.
         logdensity_grad: the negative gradient of the objective function at the current
             solution.
@@ -249,7 +248,7 @@ class MCMC(Optimizer):
             )
             proposed_state = MCMCOptimizerState(
                 solution=proposed_solution,
-                objective_value=-proposed_logdensity,
+                objective_value=-proposed_logdensity / self._objective_scale,
                 logdensity=proposed_logdensity,
                 logdensity_grad=proposed_logdensity_grad,
                 cumulative_function_calls=state.cumulative_function_calls + 1,
