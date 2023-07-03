@@ -51,6 +51,8 @@ class MCMC(Optimizer):
     # gradients)
     _uses_gradients: bool
     _metropolis_adjusted: bool
+    # Add scaling to the objective (sometimes helps MCMC methods find optima)
+    _objective_scale: float
 
     @property
     def description(self) -> str:
@@ -64,7 +66,11 @@ class MCMC(Optimizer):
 
     @beartype
     def __init__(
-        self, use_gradients: bool, use_metropolis: bool, step_size: float = 1e-3
+        self,
+        use_gradients: bool,
+        use_metropolis: bool,
+        step_size: float = 1e-3,
+        objective_scale: float = 1.0,
     ):
         """Initialize the MCMC optimizer.
 
@@ -73,9 +79,10 @@ class MCMC(Optimizer):
         To get an RMH sampler, set `use_gradients=False` and `use_metropolis=True`.
 
         Args:
-            step_size: the step size of the MCMC sampler.
             use_gradients: whether to use gradients.
             use_metropolis: whether to use a Metropolis accept/reject step.
+            step_size: the step size of the MCMC sampler.
+            objective_scale: a scaling factor to apply to the objective function.
 
         Raises:
             ValueError: if both `use_gradients` and `use_metropolis` are False.
@@ -92,6 +99,7 @@ class MCMC(Optimizer):
         self._step_size = step_size
         self._uses_gradients = use_gradients
         self._metropolis_adjusted = use_metropolis
+        self._objective_scale = objective_scale
 
     @beartype
     def to_dict(self) -> Dict[str, Any]:
@@ -100,6 +108,7 @@ class MCMC(Optimizer):
             "use_gradients": self._uses_gradients,
             "use_metropolis": self._metropolis_adjusted,
             "step_size": self._step_size,
+            "objective_scale": self._objective_scale,
         }
 
     @jaxtyped
@@ -171,7 +180,7 @@ class MCMC(Optimizer):
         """
         # Convert the objective function to a log density function by negating it
         # This means that low costs -> high densitites -> more likely samples
-        logdensity_fn = lambda x: -objective_fn(x)  # pylint: disable-all
+        logdensity_fn = lambda x: -self._objective_scale * objective_fn(x)
 
         # Wrap the objective function to return its value and gradient, then get
         # the initial objective value and gradient (caching these in the state

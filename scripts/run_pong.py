@@ -52,6 +52,7 @@ if __name__ == "__main__":
                         "type": "MCMC",
                         "hparams": {
                             "step_size": 1e-2,
+                            "objective_scale": 1e1,
                             "use_gradients": True,
                             "use_metropolis": True,
                         },
@@ -61,6 +62,7 @@ if __name__ == "__main__":
                         "type": "MCMC",
                         "hparams": {
                             "step_size": 1e-2,
+                            "objective_scale": 1e1,
                             "use_gradients": False,
                             "use_metropolis": True,
                         },

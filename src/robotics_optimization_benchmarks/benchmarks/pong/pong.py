@@ -6,6 +6,7 @@ from beartype import beartype
 from beartype.typing import Any
 from beartype.typing import BinaryIO
 from beartype.typing import Dict
+from beartype.typing import Optional
 from jaxtyping import Array
 from jaxtyping import Float
 from jaxtyping import jaxtyped
@@ -127,18 +128,17 @@ class Pong(Benchmark):
             p2b_tangent = p2b_x * jnp.sin(paddle_theta) - p2b_y * jnp.cos(paddle_theta)
 
             collision = jnp.logical_and(
-                jnp.logical_and(
-                    p2b_normal <= 0, jnp.abs(p2b_normal) <= self._paddle_thickness
-                ),
+                jnp.abs(p2b_normal) <= self._paddle_thickness / 2.0,
                 jnp.abs(p2b_tangent) <= self._paddle_width / 2,
             )
 
             # Get the time of contact
             v_normal = v_x * jnp.cos(paddle_theta) + v_y * jnp.sin(paddle_theta)
-            v_normal = jnp.where(jnp.abs(v_normal) <= 1e-2, 1e-2, v_normal)  # avoid nan
+            v_normal = jnp.where(jnp.abs(v_normal) <= 1e-4, 1e-4, v_normal)  # avoid nan
+            penetration = self._paddle_thickness / 2.0 - jnp.abs(p2b_normal)
             time_of_contact = jnp.where(
                 collision,
-                timestep - p2b_normal / v_normal,
+                timestep - jnp.abs(penetration / v_normal),
                 timestep,
             )
 
@@ -183,13 +183,14 @@ class Pong(Benchmark):
         return jnp.sum((final_x - self.goal_x) ** 2 + (final_y - self.goal_y) ** 2)
 
     def render_solution(
-        self, solution: Float[Array, "dimension 3"], save_to: str | BinaryIO
+        self, solution: Float[Array, "dimension 3"], save_to: Optional[str | BinaryIO]
     ) -> None:
         """Visualize a solution to the problem, saving the visualization.
 
         Args:
             solution: the solution to visualize.
-            save_to: the path or file-like object to save the visualization to.
+            save_to: the path or file-like object to save the visualization to. If None,
+                the visualization will be displayed in a window.
         """
         # Simulate to get the trace of states
         _, (p_x, p_y, _, _) = self.simulate(solution)
@@ -198,7 +199,7 @@ class Pong(Benchmark):
         fig, axis = plt.subplots(1, 1, figsize=(12, 12))
 
         # Plot the trajectory of the ball
-        axis.plot(p_x, p_y, color="blue", linewidth=1.0, label="Trajectory")
+        axis.plot(p_x, p_y, "-o", color="blue", linewidth=1.0, label="Trajectory")
 
         # Plot the paddle
         paddle_x, paddle_y, paddle_theta = solution.T
@@ -208,9 +209,18 @@ class Pong(Benchmark):
             * self._paddle_width
             / 2
         )
-        paddle_left = paddle_center - paddle_tangent
-        paddle_right = paddle_center + paddle_tangent
-        paddle_points = jnp.hstack((paddle_left, paddle_right))
+        paddle_normal = (
+            jnp.vstack((jnp.cos(paddle_theta), jnp.sin(paddle_theta)))
+            * self._paddle_thickness
+            / 2
+        )
+        upper_left = paddle_center - paddle_tangent - paddle_normal
+        upper_right = paddle_center - paddle_tangent + paddle_normal
+        lower_left = paddle_center + paddle_tangent - paddle_normal
+        lower_right = paddle_center + paddle_tangent + paddle_normal
+        paddle_points = jnp.hstack(
+            (upper_left, upper_right, lower_right, lower_left, upper_left)
+        )
         axis.plot(
             paddle_points[0],
             paddle_points[1],
@@ -238,6 +248,33 @@ class Pong(Benchmark):
 
 
 if __name__ == "__main__":
-    # Plot a 1D problem
+    # Plot the cost for a 1D problem for a range of solutions
     pong = Pong(1)
-    pong.render_solution(jnp.array([[-0.25, -0.25, 0.5]]), "test_pong.png")
+
+    # Create a mesh over y and theta testing a range of values
+    N = 1000
+    theta_range = jnp.linspace(-jnp.pi / 2, jnp.pi / 2, N)
+    y_range = jnp.linspace(-1, 1, N)
+    y_mesh, theta_mesh = jnp.meshgrid(y_range, theta_range)
+
+    # Create a mesh of solutions covering that range
+    solution = jnp.zeros((N, N, 1, 3))
+    solution = solution.at[:, :, 0, 1:].set(jnp.stack((y_mesh, theta_mesh), axis=-1))
+
+    # Evaluate the cost for each solution
+    costs = jax.vmap(jax.vmap(pong.evaluate_solution))(solution)
+
+    # Plot the cost surface
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    ax.plot_surface(
+        y_mesh,
+        theta_mesh,
+        costs,
+    )
+
+    # Pretty up the plot
+    ax.set_xlabel(r"$y$")
+    ax.set_ylabel(r"$\theta$")
+    ax.set_zlabel(r"Cost")
+
+    plt.show()
