@@ -17,7 +17,8 @@
       "hparams": {
         "use_gradients": true,
         "use_metropolis": true,
-        "step_size": 0.01
+        "step_size": 0.01,
+        "objective_scale": 1.0
       }
     }
   ]

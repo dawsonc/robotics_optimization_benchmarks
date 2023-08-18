@@ -31,8 +31,7 @@ if __name__ == "__main__":
     # the same logger each time so that we can aggregate the results.
     logger = FileLogger(results_dir=args.results_dir)
 
-    # dimensions = [1, 10, 100, 1000]
-    dimensions = [1]
+    dimensions = [1, 10, 100, 1000]
 
     if not args.load_data:
         for dimension in dimensions:
@@ -45,17 +44,27 @@ if __name__ == "__main__":
                 benchmark_hparams={"dimension": dimension},
                 max_steps=500,
                 optimizer_specs=[
-                    # {
-                    #     "name": "Gradient-based optimization",  # a name to label this optimizer
-                    #     "type": "GD",  # what type of optimizer is this? should match registry
-                    #     "hparams": {"step_size": 1e-2},
-                    # },
                     {
-                        "name": "Gradient-based inference",
+                        "name": "Gradient-based optimization",  # a name to label this optimizer
+                        "type": "GD",  # what type of optimizer is this? should match registry
+                        "hparams": {"step_size": 1e-2},
+                    },
+                    {
+                        "name": "Gradient-based inference (L 1)",
                         "type": "MCMC",
                         "hparams": {
                             "step_size": 1e-2,
                             "objective_scale": 1e0,
+                            "use_gradients": True,
+                            "use_metropolis": True,
+                        },
+                    },
+                    {
+                        "name": "Gradient-based inference (L 10)",
+                        "type": "MCMC",
+                        "hparams": {
+                            "step_size": 1e-2,
+                            "objective_scale": 1e1,
                             "use_gradients": True,
                             "use_metropolis": True,
                         },

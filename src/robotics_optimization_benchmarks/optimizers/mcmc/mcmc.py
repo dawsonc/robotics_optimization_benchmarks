@@ -190,7 +190,7 @@ class MCMC(Optimizer):
         # Initialize the state.
         initial_state = MCMCOptimizerState(
             solution=initial_solution,
-            objective_value=-logdensity,
+            objective_value=-logdensity / self._objective_scale,
             logdensity=logdensity,
             logdensity_grad=logdensity_grad,
             cumulative_function_calls=1,

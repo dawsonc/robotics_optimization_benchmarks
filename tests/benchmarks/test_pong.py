@@ -24,11 +24,6 @@ def test_pong_init(dimension: int):
     assert benchmark.dimension == dimension
     assert benchmark.name == "pong"
 
-    # Also test with no gap
-    benchmark = Pong(dimension=dimension, gap=False)
-    assert benchmark.dimension == dimension
-    assert benchmark.name == "pong"
-
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
 def test_pong_from_dict(dimension: int):
@@ -51,7 +46,7 @@ def test_pong_sample_initial_guess(dimension):
     benchmark = Pong(dimension=dimension)
     key = jrandom.PRNGKey(0)
     initial_guess = benchmark.sample_initial_guess(key)
-    assert initial_guess.shape == (dimension,)
+    assert initial_guess.shape == (dimension, 3)
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)
