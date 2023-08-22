@@ -105,6 +105,7 @@ class ExperimentSuite:
                         "experiment_name": self._name,
                         "benchmark_name": self._benchmark.name,
                         "optimizer_name": optimizer_name,
+                        "optimizer_type": optimizer.name,
                         "seed": seed,
                         "max_steps": self._max_steps,
                     }
