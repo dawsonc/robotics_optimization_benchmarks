@@ -47,6 +47,8 @@ def run_experiment(
         "Objective": opt_state.objective_value,
         "Best objective": best_objective,
     }
+    # Add any debug information included by the optimizer
+    log_packet = log_packet | opt_state.debug
     logger.log(log_packet)
 
     # Run the optimizer starting from this seed, which gives us a trace of solutions and
@@ -63,6 +65,7 @@ def run_experiment(
             "Objective": opt_state.objective_value,
             "Best objective": best_objective,
         }
+        log_packet = log_packet | opt_state.debug
         logger.log(log_packet)
 
     # Return the logs and solution

@@ -26,6 +26,7 @@ class VPGOptimizerState(OptimizerState):
         solution: the current solution.
         cumulative_objective_calls: the cumulative number of objective function calls.
         cumulative_gradient_calls: the cumulative number of evaluations of the gradient.
+        debug: any debug information to log
         baseline: the current baseline.
     """
 
@@ -107,6 +108,7 @@ class VPG(Optimizer):
             objective_value=objective_fn(initial_solution),
             baseline=jnp.array(0.0),  # Initialize baseline moving average to zero
             cumulative_function_calls=1,
+            debug={},  # nothing special to log
         )
 
         # Define the step function (baking in the objective and gradient functions).
@@ -159,6 +161,7 @@ class VPG(Optimizer):
                     (1 - self._baseline_update_rate) * state.baseline
                     + self._baseline_update_rate * perturbed_objective_value
                 ),
+                debug={},  # nothing special to log
             )
 
         return initial_state, step

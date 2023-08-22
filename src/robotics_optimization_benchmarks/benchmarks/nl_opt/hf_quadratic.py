@@ -171,20 +171,42 @@ class HFQuadratic(Benchmark):
 
 
 if __name__ == "__main__":
+    import pandas as pd
+    import seaborn as sns
+    from matplotlib.colors import LogNorm
+
     # Plot the cost for a 1D problem for a range of solutions
-    problem = HFQuadratic(dimension=1, n_components=2, period=0.1, noise_scale=0.1)
+    xs = pd.Series([], dtype=float)
+    ys = pd.Series([], dtype=float)
+    lipschitz_constants = pd.Series([], dtype=float)
+    noise_scales = pd.Series([], dtype=float)
+    for noise_scale in [1e-2, 2e-1, 5e-1, 1e0]:
+        problem = HFQuadratic(
+            dimension=1, n_components=2, period=0.1, noise_scale=noise_scale
+        )
 
-    # Scan over a bunch of x values
-    N = 1000
-    x = jnp.linspace(-3.0, 3.0, N).reshape(-1, 1)
-    y = jax.vmap(problem.evaluate_solution)(x)
+        # Scan over a bunch of x values
+        N = 1000
+        x = jnp.linspace(-3.0, 3.0, N).reshape(-1, 1)
+        y = jax.vmap(problem.evaluate_solution)(x)
 
-    # Plot the cost surface
-    fig, ax = plt.subplots()
-    ax.plot(x, y)
+        xs = pd.concat([xs, pd.Series(x[:, 0])], ignore_index=True)
+        ys = pd.concat([ys, pd.Series(y)], ignore_index=True)
+        lipschitz_constants = pd.concat(
+            [
+                lipschitz_constants,
+                pd.Series([problem.noise_lipschitz_constant.tolist()] * N),
+            ],
+            ignore_index=True,
+        )
+        noise_scales = pd.concat(
+            [noise_scales, pd.Series([noise_scale] * N)], ignore_index=True
+        )
 
-    # Pretty up the plot
-    ax.set_xlabel(r"$x$")
-    ax.set_ylabel(r"Cost")
+    df = pd.DataFrame(
+        {"x": xs, "y": ys, "noise_scale": noise_scales, "L": lipschitz_constants}
+    )
+
+    plot = sns.lineplot(data=df, x="x", y="y", hue="L", hue_norm=LogNorm())
 
     plt.show()

@@ -25,6 +25,7 @@ class GDOptimizerState(OptimizerState):
         solution: the current solution.
         cumulative_objective_calls: the cumulative number of objective function calls.
         cumulative_gradient_calls: the cumulative number of evaluations of the gradient
+        debug: any debug information to log
         grad: the gradient of the objective function at the current
             solution.
     """
@@ -84,6 +85,7 @@ class GD(Optimizer):
             objective_value=value,
             cumulative_function_calls=0,
             grad=grad,
+            debug={},  # nothing special to log
         )
 
         # Define the step function (baking in the objective and gradient functions).
@@ -112,6 +114,7 @@ class GD(Optimizer):
                 # We evaluated the gradient once to step to the next solution.
                 cumulative_function_calls=state.cumulative_function_calls + 1,
                 grad=gradient,
+                debug={},  # nothing special to log
             )
 
         return initial_state, step

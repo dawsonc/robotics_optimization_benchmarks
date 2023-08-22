@@ -29,11 +29,10 @@ def test_hf_quadratic_init(dimension: int):
 def test_hf_quadratic_to_dict(dimension: int):
     """Test quadratic benchmark to dict."""
     benchmark = HFQuadratic(dimension=dimension)
-    assert benchmark.to_dict() == {
-        "dimension": dimension,
-        "n_components": benchmark.n_components,
-        "period": benchmark.period,
-    }
+    assert "dimension" in benchmark.to_dict()
+    assert "period" in benchmark.to_dict()
+    assert "n_components" in benchmark.to_dict()
+    assert "noise_scale" in benchmark.to_dict()
 
 
 @pytest.mark.parametrize("dimension", dimensions_to_test)

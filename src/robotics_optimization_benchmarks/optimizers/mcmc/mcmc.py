@@ -29,13 +29,16 @@ class MCMCOptimizerState(OptimizerState):
     Attributes:
         solution: the current solution.
         cumulative_objective_calls: the cumulative number of objective function calls.
+        debug: any debug information to log
         logdensity: the negative of the objective value at the current solution.
         logdensity_grad: the negative gradient of the objective function at the current
             solution.
+        num_accepts: total number of accepted steps
     """
 
     logdensity: Float[Array, ""]
     logdensity_grad: DecisionVariable
+    num_accepts: int
 
 
 class MCMC(Optimizer):
@@ -194,6 +197,8 @@ class MCMC(Optimizer):
             logdensity=logdensity,
             logdensity_grad=logdensity_grad,
             cumulative_function_calls=1,
+            num_accepts=1,
+            debug={"acceptance_rate": 1.0},
         )
 
         # Define the step function (baking in the objective and gradient functions).
@@ -252,6 +257,11 @@ class MCMC(Optimizer):
                 logdensity=proposed_logdensity,
                 logdensity_grad=proposed_logdensity_grad,
                 cumulative_function_calls=state.cumulative_function_calls + 1,
+                num_accepts=state.num_accepts + 1,
+                debug={
+                    "acceptance_rate": (state.num_accepts + 1)
+                    / (state.cumulative_function_calls + 1)
+                },
             )
 
             # Update the old state to increase the number of objective and gradient
@@ -263,6 +273,11 @@ class MCMC(Optimizer):
                 logdensity=state.logdensity,
                 logdensity_grad=state.logdensity_grad,
                 cumulative_function_calls=state.cumulative_function_calls + 1,
+                num_accepts=state.num_accepts,
+                debug={
+                    "acceptance_rate": state.num_accepts
+                    / (state.cumulative_function_calls + 1)
+                },
             )
 
             # Compute the acceptance probability per the Metropolis-Hastings algorithm

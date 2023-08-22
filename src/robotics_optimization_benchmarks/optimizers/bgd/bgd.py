@@ -89,6 +89,7 @@ class BGD(Optimizer):
             solution=initial_solution,
             objective_value=objective_fn(initial_solution),
             cumulative_function_calls=1,
+            debug={},  # nothing special to log
         )
 
         # The zero-order batched gradient estimator is the average of a bunch of
@@ -186,6 +187,7 @@ class BGD(Optimizer):
                 cumulative_function_calls=(
                     state.cumulative_function_calls + 1 + self._n_samples
                 ),
+                debug={},  # nothing special to log
             )
 
         return initial_state, step

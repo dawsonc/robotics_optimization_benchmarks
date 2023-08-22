@@ -27,11 +27,13 @@ class OptimizerState:
         objective_value: the value of the objective function at the current solution.
         cumulative_function_calls: the cumulative number of objective function or
             gradient calls.
+        debug: any debug information to log
     """
 
     solution: DecisionVariable
     objective_value: Float[Array, ""]
     cumulative_function_calls: int
+    debug: dict[str, Float[Array, ""]]
 
 
 class Optimizer(ABC):

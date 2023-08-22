@@ -26,6 +26,7 @@ class OptaxOptimizerState(OptimizerState):
         solution: the current solution.
         objective_value: the value of the objective function at the current solution.
         cumulative_function_calls: the cumulative number of objective function calls.
+        debug: any debug information to log
         optax_state: the state of the wrapped Optax optimizer.
     """
 
@@ -102,6 +103,7 @@ class Optax(Optimizer):
             objective_value=objective_fn(initial_solution),
             cumulative_function_calls=0,
             optax_state=self._optimizer.init(initial_solution),
+            debug={},  # nothing special to log
         )
 
         # Auto-diff the objective to pass into our step function
@@ -132,6 +134,7 @@ class Optax(Optimizer):
                 # We evaluated the gradient once to step to the next solution.
                 cumulative_function_calls=state.cumulative_function_calls + 1,
                 optax_state=next_optax_state,
+                debug={},  # nothing special to log
             )
 
         return initial_state, step
