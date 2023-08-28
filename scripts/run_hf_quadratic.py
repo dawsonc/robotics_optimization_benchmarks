@@ -3,7 +3,6 @@ import argparse
 import os
 from functools import partial
 
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.colors import LogNorm
@@ -43,8 +42,13 @@ if __name__ == "__main__":
     noise_scale = 0.1
     period = 0.1
 
+    # noise_scales = jnp.logspace(-4, 1, 125).tolist()
+    noise_scales = [1.0]
+
     if not args.load_data:
-        for noise_scale in jnp.logspace(0, 1, 25).tolist():
+        for i, noise_scale in enumerate(noise_scales):
+            print("=====================================")
+            print(f"Running experiment with noise scale {noise_scale} ({i}-th element)")
             # Create an experiment suite for the quadratic
             experiment_suite = experiment_suite_factory.create_experiment_suite(
                 name="hf_quadratic",
@@ -57,44 +61,36 @@ if __name__ == "__main__":
                     "period": period,
                     "noise_scale": noise_scale,
                 },
-                max_steps=400,
+                max_steps=200,
                 optimizer_specs=[
                     {
-                        "name": "MALA (1e-1)",
-                        "type": "MCMC",
+                        "name": "HMC (3e-2)",
+                        "type": "HMC",
+                        "hparams": {
+                            "step_size": 3e-2,
+                        },
+                    },
+                    {
+                        "name": "HMC (1e-1)",
+                        "type": "HMC",
                         "hparams": {
                             "step_size": 1e-1,
-                            "use_gradients": True,
-                            "use_metropolis": True,
                         },
                     },
-                    {
-                        "name": "MALA (1e-2)",
-                        "type": "MCMC",
-                        "hparams": {
-                            "step_size": 1e-2,
-                            "use_gradients": True,
-                            "use_metropolis": True,
-                        },
-                    },
-                    {
-                        "name": "MALA (1e-3)",
-                        "type": "MCMC",
-                        "hparams": {
-                            "step_size": 1e-3,
-                            "use_gradients": True,
-                            "use_metropolis": True,
-                        },
-                    },
-                    {
-                        "name": "MALA (1e-4)",
-                        "type": "MCMC",
-                        "hparams": {
-                            "step_size": 1e-4,
-                            "use_gradients": True,
-                            "use_metropolis": True,
-                        },
-                    },
+                    # {
+                    #     "name": "NUTS (1e-3)",
+                    #     "type": "NUTS",
+                    #     "hparams": {
+                    #         "step_size": 1e-3,
+                    #     },
+                    # },
+                    # {
+                    #     "name": "NUTS (1e-4)",
+                    #     "type": "NUTS",
+                    #     "hparams": {
+                    #         "step_size": 1e-4,
+                    #     },
+                    # },
                 ],
             )
 
@@ -105,28 +101,26 @@ if __name__ == "__main__":
     log_df = logger.get_logs()
     print("Loaded data from disk.")
 
-    # # Overwrite optimizer type to reflect MALA vs RMH
-    # log_df["optimizer_type"] = log_df["optimizer_name"].apply(
-    #     lambda x: "GD"
-    #     if not ("MALA" in x or "RMH" in x)
-    #     else ("MALA" if "MALA" in x else "RMH")
-    # )
+    # Overwrite optimizer type for some runs (all MCMC are MALA)
+    log_df["optimizer_type"] = log_df["optimizer_type"].apply(
+        lambda x: "MALA" if x == "MCMC" else x
+    )
 
-    # # Plot convergence
-    # sns.lineplot(
-    #     data=log_df,
-    #     x="Cumulative objective calls",
-    #     y="Objective",
-    #     hue="optimizer_name",
-    #     style="lipschitz_constant",
-    # )
+    # Plot convergence
+    sns.lineplot(
+        data=log_df,
+        x="Cumulative objective calls",
+        y="Objective",
+        hue="optimizer_name",
+        style="lipschitz_constant",
+    )
 
-    # # Save the plot
-    # plt.savefig(os.path.join(args.results_dir, "0_learning_curves.png"))
-    # print("done plotting learning curves.")
+    # Save the plot
+    plt.savefig(os.path.join(args.results_dir, "0_learning_curves.png"))
+    print("done plotting learning curves.")
 
-    # # Clear the plot
-    # plt.clf()
+    # Clear the plot
+    plt.clf()
 
     # # Plot convergence
     # sns.lineplot(
@@ -157,15 +151,17 @@ if __name__ == "__main__":
         x="lipschitz_constant",
         y="Last 50 Avg Acceptance Rate",
         hue="step_size",
-        err_style="bars",
+        style="optimizer_type",
+        err_style="band",
         errorbar=("ci", 95),
         hue_norm=LogNorm(),
     )
     plt.xscale("log")
     plt.yscale("log")
+    plt.ylim([1e-4, 1e1])
     plt.xlabel("Lipschitz Constant")
     plt.ylabel("MCMC Acceptance Rate")
-    plt.gca().get_legend().set_title(r"MALA step size $\tau$")
+    plt.gca().get_legend().set_title(r"step size $\tau$")
 
     # Save the plot
     plt.savefig(os.path.join(args.results_dir, "0_mean_accept_rate.png"))
@@ -182,7 +178,8 @@ if __name__ == "__main__":
         x="lipschitz_constant",
         y="Last 50 Avg Objective",
         hue="step_size",
-        err_style="bars",
+        style="optimizer_type",
+        err_style="band",
         errorbar=("ci", 95),
         hue_norm=LogNorm(),
     )
@@ -190,7 +187,7 @@ if __name__ == "__main__":
     plt.yscale("log")
     plt.xlabel("Lipschitz Constant")
     plt.ylabel("Final objective value")
-    plt.gca().get_legend().set_title(r"MALA step size $\tau$")
+    plt.gca().get_legend().set_title(r"step size $\tau$")
 
     # Save the plot
     plt.savefig(os.path.join(args.results_dir, "0_mean_objective.png"))

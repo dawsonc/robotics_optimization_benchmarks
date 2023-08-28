@@ -4,6 +4,8 @@ from beartype.typing import Dict
 from beartype.typing import Type
 
 from robotics_optimization_benchmarks.optimizers.bgd import BGD
+from robotics_optimization_benchmarks.optimizers.blackjax import HMC
+from robotics_optimization_benchmarks.optimizers.blackjax import NUTS
 from robotics_optimization_benchmarks.optimizers.gd import GD
 from robotics_optimization_benchmarks.optimizers.mcmc import MCMC
 from robotics_optimization_benchmarks.optimizers.optax import Optax
@@ -65,5 +67,7 @@ def register(name: str, optimizer: Type[Optimizer]) -> None:
 register(BGD.name, BGD)
 register(GD.name, GD)
 register(MCMC.name, MCMC)
+register(HMC.name, HMC)
+register(NUTS.name, NUTS)
 register(VPG.name, VPG)
 register(Optax.name, Optax)
